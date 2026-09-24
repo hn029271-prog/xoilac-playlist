@@ -1,7 +1,21 @@
 #EXTM3U
-#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] Kênh Thể Thao Tổng Hợp 1
-https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
-#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] Kênh Thể Thao Tổng Hợp 2
-https://cph-p2p-ms.akamaized.net/hls/live/2000341/test/master.m3u8
-#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] Bóng Đá Quốc Tế (HD)
-https://sample-videos.com/video123/m3u8/hls-720p/big_buck_bunny_720p_20s.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 📺Nhà đài
+https://luong.phaohoa.live/live/phaohoa4/index.m3u8?expire=1815505159\u0026sign=faaa23580764370ed378ecd708c9f262\
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 📺Nhà đài
+https://livecdn.cdnfastter.xyz/live/livehub9/index.m3u8\
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 📺Nhà đài
+https://livecdn.cdnfastter.xyz/live/livehub1/index.m3u8\
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 📺Nhà đài
+https://livecdn.cdnfastter.xyz/live/livehub5/index.m3u8\
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 📺Nhà đài
+https://livecdn.cdnfastter.xyz/live/livehub8/index.m3u8\
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 📺Nhà đài
+https://livecdn.cdnfastter.xyz/live/livehub4/index.m3u8\
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] QATAR V BAHRAIN 1637931
+https://luong.phaohoa.live/live/phaohoa4/index.m3u8?expire=1815505159\u0026sign=faaa23580764370ed378ecd708c9f262\
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] BLV Pháo Thủ
+https://luong.phaohoa.live/live/phaohoa4/index.m3u8?expire=1815505159\u0026sign=faaa23580764370ed378ecd708c9f262\
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] HA LAN V DUC KG 1109748395
+https://livecdn.cdnfastter.xyz/live/livehub9/index.m3u8\
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] BLV Khô Cay
+https://livecdn.cdnfastter.xyz/live/livehub9/index.m3u8\
