@@ -1,67 +1,79 @@
-import re
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 
-TARGET_URL = "https://xoiche.tv"
-OUTPUT_FILE = "xoilac_live.m3u"
+# Trang web nguồn cần cào dữ liệu
+URL = "https://xoiche.tv/"
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/120.0.0.0 Safari/537.36"
-    ),
-    "Referer": TARGET_URL,
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
+def get_matches():
+    playlist = ["#EXTM3U\n"]
+    try:
+        response = requests.get(URL, headers=headers, timeout=10)
+        if response.status_code != 200:
+            print(f"Không thể truy cập trang web, mã lỗi: {response.status_code}")
+            return playlist
 
-def cao_link_bong_da():
-  print("Đang tiến hành truy cập và cào dữ liệu từ Xôi Lạc...")
-  try:
-    response = requests.get(TARGET_URL, headers=HEADERS, timeout=10)
-    if response.status_code != 200:
-      return
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Tìm các khối chứa thông tin trận đấu (thường là các thẻ chứa lịch thi đấu/trực tiếp)
+        # Tùy thuộc vào giao diện thực tế của trang, ta quét các khối trận đấu
+        match_items = soup.find_all('div', class_='match-item') # Hoặc cấu trúc thẻ tương ứng
+        
+        # Nếu trang web thay đổi cấu trúc class, ta quét tất cả các đường dẫn trận đấu có chứa từ khóa
+        if not match_items:
+            # Quét rộng hơn để bắt các thẻ a hoặc div có chứa link trận đấu
+            links = soup.find_all('a', href=True)
+            match_links = [l['href'] for l in links if '/match/' in l['href'] or 'tran-dau' in l['href']]
+            match_links = list(set(match_links)) # Lọc trùng
+            
+            if match_links:
+                for link in match_links[:10]: # Lấy tối đa 10 trận đang hot
+                    if not link.startswith('http'):
+                        match_link = "https://xoiche.tv" + link
+                    else:
+                        match_link = link
+                    
+                    # Tạo tên hiển thị cho trận đấu dựa vào đường dẫn
+                    match_name = link.split('/')[-1].replace('-', ' ').upper()
+                    if not match_name:
+                        match_name = "TRAN DAU TRUC TIEP"
+                        
+                    playlist.append(f'#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] {match_name}\n')
+                    playlist.append(f'{match_link}\n')
+        else:
+            for item in match_items:
+                # Trích xuất tên đội bóng hoặc tên trận đấu
+                title_elem = item.find('div', class_='teams')
+                title = title_elem.text.strip() if title_elem else "Trận đấu trực tiếp"
+                title = " ".join(title.split()) # Xóa khoảng trắng thừa
+                
+                # Lấy link chi tiết hoặc link stream trực tiếp bên trong
+                a_tag = item.find('a', href=True)
+                if a_tag:
+                    link = a_tag['href']
+                    if not link.startswith('http'):
+                        link = "https://xoiche.tv" + link
+                        
+                    playlist.append(f'#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] {title}\n')
+                    playlist.append(f'{link}\n')
 
-    soup = BeautifulSoup(response.text, "html.parser")
-    m3u_content = "#EXTM3U\n"
-    so_luong_tran = 0
+    except Exception as e:
+        print(f"Lỗi trong quá trình cào dữ liệu: {e}")
 
-    matches = soup.find_all(
-        "div", class_=re.compile(r"(match-item|live|playing)")
-    )
+    return playlist
 
-    for match in matches:
-      try:
-        team_home = match.find("span", class_="home-team").text.strip()
-        team_away = match.find("span", class_="away-team").text.strip()
-        match_name = f"{team_home} vs {team_away}"
-
-        match_link = match.find("a")["href"]
-        if not match_link.startswith("http"):
-          match_link = TARGET_URL + match_link
-
-        match_page = requests.get(match_link, headers=HEADERS, timeout=5)
-        stream_urls = re.findall(
-            r"(https?://[^\s\"']+\.m3u8[^\s\"']*)", match_page.text
-        )
-
-        if stream_urls:
-          final_stream_url = stream_urls[0]
-          m3u_content += (
-              f'#EXTINF:-1 group-title="Xôi Lạc Live", [LIVE] {match_name}\n'
-          )
-          m3u_content += f"{final_stream_url}\n"
-          so_luong_tran += 1
-      except Exception:
-        continue
-
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-      f.write(m3u_content)
-    print(f"Hoàn tất! Đã tìm thấy {so_luong_tran} trận.")
-
-  except Exception as e:
-    print(f"Lỗi: {e}")
-
+def save_playlist():
+    playlist = get_matches()
+    # Nếu không quét được trận nào (ví dụ ngoài giờ thi đấu), giữ lại cấu trúc chuẩn M3U
+    if len(playlist) <= 1:
+        print("Không tìm thấy trận đấu nào đang diễn ra hoặc cấu trúc trang đã thay đổi.")
+    
+    with open("xoilac_live.m3u", "w", encoding="utf-8") as f:
+        f.writelines(playlist)
+    print("Đã cập nhật file xoilac_live.m3u thành công!")
 
 if __name__ == "__main__":
-  cao_link_bong_da()
+    save_playlist()
