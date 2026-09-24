@@ -1,34 +1,31 @@
 name: Update Xoilac M3U
 
 on:
+  workflow_dispatch: # Vẫn giữ nút chạy thủ công nếu cần
   schedule:
-    - cron: '*/10 * * * *'
-  workflow_dispatch:
+    - cron: '*/1 * * * *' # Thiết lập chạy tự động cứ mỗi 1 phút / lần
 
 jobs:
-  update-m3u:
+  update:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: |
+          pip install requests beautifulsoup4
 
-      - name: Run scraper
+      - name: Run script
         run: python main.py
 
-      - name: Commit and push if playlist changed
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add xoilac_live.m3u
-          git diff --staged --quiet || git commit -m "Auto-update M3U playlist [skip ci]"
-          git push
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Auto-update M3U playlist every 1 min [skip ci]"
+          file_patterns: xoilac_live.m3u
