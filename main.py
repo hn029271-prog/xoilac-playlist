@@ -86,10 +86,8 @@ def main():
                 
                 try:
                     match_page.goto(match_url, timeout=15000, wait_until="domcontentloaded")
-                    # Tăng thời gian chờ để player render và phát sinh request stream
                     match_page.wait_for_timeout(6000)
                     
-                    # Phương án phụ: quét thẻ video trực tiếp nếu request chưa bắt được
                     if not stream_url:
                         video_src = match_page.evaluate("() => { const v = document.querySelector('video'); return v ? v.src : null; }")
                         if video_src and 'http' in video_src:
@@ -111,7 +109,6 @@ def main():
     except Exception as e:
         print(f"Lỗi tổng quan: {e}")
 
-    # Chỉ dùng fallback nếu hoàn toàn không bắt được trận nào
     if len(playlist) <= 1:
         playlist.append('#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [THÔNG BÁO] Đang chờ cập nhật trận đấu\n')
         playlist.append('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8\n')
@@ -121,4 +118,4 @@ def main():
     print("Đã cập nhật danh sách M3U thành công!")
 
 if __name__ == "__main__":
-main()
+    main()
