@@ -4,9 +4,11 @@ from playwright.sync_api import sync_playwright
 URL = "https://xoiche.live/"
 
 def clean_team_name(text):
-    # Xóa giờ và ngày tháng
-    text = re.sub(r'\d{1,2}:\d{2}', '', text)
-    text = re.sub(r'\d{1,2}[-/]\d{1,2}([-/]\d{2,4})?', '', text)
+    # Quét sạch 100% các cụm ngày giờ bất chấp định dạng (25:09, 25/09, 25-09...)
+    text = re.sub(r'\d{1,2}[:/\-]\d{1,2}([:/\-]\d{2,4})?', '', text)
+    
+    # Xóa các con số lạc lõng đứng đầu câu (phòng hờ ngày tháng bị vỡ)
+    text = re.sub(r'^\s*\d+\s*', '', text)
     
     # Xóa các từ rác phổ biến và tên giải đấu
     trash_words = [
@@ -50,7 +52,6 @@ def main():
                 pass
             page.wait_for_timeout(8000)
             
-            # Click vượt quảng cáo và cuộn trang
             try:
                 page.mouse.click(500, 500)
                 page.wait_for_timeout(2000)
@@ -73,11 +74,9 @@ def main():
                     if any(x in href.lower() for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'telegram', 'login', 'register']):
                         continue
                         
-                    # LỌC CỨNG: NẾU CÓ CHỮ SẮP DIỄN RA HOẶC HÔM NAY -> VỨT BỎ NGAY
                     if "SẮP DIỄN RA" in raw_text or "HÔM NAY" in raw_text:
                         continue
 
-                    # Tìm Tỉ số và số Phút
                     score_match = re.search(r'(\d+)\s*-\s*(\d+)', raw_text)
                     min_match = re.search(r"(\d{1,3}\s*')", raw_text)
                     
@@ -91,11 +90,9 @@ def main():
                     elif "ĐANG ĐÁ" in raw_text:
                         minute = "LIVE"
 
-                    # QUY TẮC SỐNG CÒN: Không có Tỉ số VÀ Không có số Phút = Trận chưa đá -> VỨT BỎ
                     if not score_match and not minute:
                         continue
                         
-                    # Tiến hành cắt tỉa tên
                     if score_match:
                         parts = re.split(r'\d+\s*-\s*\d+', raw_text, maxsplit=1)
                         team_a = clean_team_name(parts[0])
@@ -103,11 +100,11 @@ def main():
                         score_a = score_match.group(1)
                         score_b = score_match.group(2)
                         
-                        final_name = f"{team_a} {score_a} : {score_b} {team_b}"
+                        # Đổi dấu ":" thành "-" để tránh lỗi ẩn ký tự trên app RomCloud
+                        final_name = f"{team_a} {score_a} - {score_b} {team_b}"
                     else:
                         final_name = clean_team_name(raw_text)
 
-                    # Gắn thêm số phút vào cuối
                     if minute:
                         final_name += f" | {minute}"
                         
