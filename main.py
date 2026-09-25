@@ -11,11 +11,7 @@ def main():
         with sync_playwright() as p:
             browser = p.chromium.launch(
                 headless=True,
-                args=[
-                    "--no-sandbox",
-                    "--disable-dev-shm-usage",
-                    "--disable-blink-features=AutomationControlled"
-                ]
+                args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-blink-features=AutomationControlled"]
             )
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
@@ -23,25 +19,20 @@ def main():
             )
             
             page = context.new_page()
-            print("Đang truy cập trang chủ xoiche.live và chờ tải dữ liệu mạng...")
+            print("Đang truy cập trang chủ xoiche.live...")
             
             try:
-                # Dùng networkidle để đợi trang chạy xong JavaScript và render danh sách trận đấu
-                page.goto(URL, timeout=60000, wait_until="networkidle")
-            except Exception as e:
-                print(f"Cảnh báo mạng: {e}")
-                page.goto(URL, timeout=60000, wait_until="domcontentloaded")
+                page.goto(URL, timeout=20000, wait_until="domcontentloaded")
+            except Exception:
+                pass
             
-            # Chờ thêm để các thành phần trận đấu hiển thị hoàn toàn
-            print("Đang đợi hiển thị danh sách trận đấu...")
-            page.wait_for_timeout(6000)
+            page.wait_for_timeout(4000)
             
-            # Cuộn trang xuống để kích hoạt toàn bộ các trận đấu ẩn bên dưới (lazy load)
-            for _ in range(4):
+            # Cuộn trang nhanh để kích hoạt các trận đấu
+            for _ in range(2):
                 page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
-                page.wait_for_timeout(2500)
+                page.wait_for_timeout(1500)
             
-            # Quét tất cả các thẻ a trên trang
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
             print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
             
@@ -50,7 +41,6 @@ def main():
                 text = l['text'].strip()
                 if href and href != URL and 'xoiche.live' in href:
                     lower_href = href.lower()
-                    # Loại bỏ các trang hệ thống không phải trận đấu
                     if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me', 'login', 'register', 'highlight']):
                         match_title = text if len(text) > 3 else href.split('/')[-1].replace('-', ' ').upper()
                         if href not in match_dict:
@@ -60,7 +50,7 @@ def main():
             
             count = 0
             for match_url, title in match_dict.items():
-                if count >= 15: # Lấy tối đa 15 trận
+                if count >= 10: # Lấy tối đa 10 trận để chạy cực nhanh
                     break
                 
                 stream_url = None
@@ -74,8 +64,8 @@ def main():
                 match_page.on("request", on_request)
                 
                 try:
-                    match_page.goto(match_url, timeout=15000, wait_until="domcontentloaded")
-                    match_page.wait_for_timeout(4000)
+                    match_page.goto(match_url, timeout=8000, wait_until="domcontentloaded")
+                    match_page.wait_for_timeout(2500)
                 except Exception:
                     pass
                 
