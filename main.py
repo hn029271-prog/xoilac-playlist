@@ -6,13 +6,10 @@ URL = "https://xoiche.tv/"
 def clean_match_name(raw_title):
     if not raw_title:
         return None
-    lower_title = raw_title.lower()
-    if any(keyword in lower_title for keyword in ["nhà đài", "blv", "kênh", "soi kèo", "lịch thi đấu"]):
-        return None
     title = re.sub(r'\s+(?:kg|id)?\s*\d+', '', raw_title, flags=re.IGNORECASE)
     title = re.sub(r'[\?#].*', '', title)
     title = title.strip().upper()
-    if len(title) < 4:
+    if len(title) < 3:
         return None
     return title
 
@@ -24,11 +21,7 @@ def main():
         with sync_playwright() as p:
             browser = p.chromium.launch(
                 headless=True,
-                args=[
-                    "--disable-blink-features=AutomationControlled",
-                    "--no-sandbox",
-                    "--disable-dev-shm-usage",
-                ]
+                args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-blink-features=AutomationControlled"]
             )
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
@@ -37,28 +30,27 @@ def main():
             
             page = context.new_page()
             print("Đang truy cập trang chủ...")
+            page.goto(URL, timeout=45000, wait_until="domcontentloaded")
+            page.wait_for_timeout(6000)
             
-            # Tăng timeout lên 45 giây và đổi cách chờ sang domcontentloaded để không bị nghẽn
-            try:
-                page.goto(URL, timeout=45000, wait_until="domcontentloaded")
-            except Exception as e:
-                print(f"Cảnh báo khi vào trang chủ: {e}")
-                
-            page.wait_for_timeout(5000) # Chờ thêm 5 giây để JS kịp render trận đấu
-            
-            # Lấy tất cả các thẻ a trên trang
+            # Lấy toàn bộ thẻ a để phân tích
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
-            print(f"Tổng số link quét được trên trang: {len(links)}")
+            print(f"DEBUG - Tổng số link tìm thấy trên trang: {len(links)}")
+            
+            # In ra 20 link đầu tiên trong log để xem cấu trúc trang web
+            for i, l in enumerate(links[:20]):
+                print(f"Mẫu {i+1}: href='{l['href']}' | text='{l['text'].strip()}'")
             
             for l in links:
                 href = l['href']
-                if href and ('/tran-dau/' in href or '/match/' in href):
+                if href and href != URL:
                     title = l['text'].strip()
                     if not title or len(title) < 3:
                         title = href.split('/')[-1].replace('-', ' ')
                     cleaned = clean_match_name(title)
-                    if cleaned and href not in match_dict:
-                        match_dict[href] = cleaned
+                    # Chấp nhận mọi link con có chứa từ khóa hoặc có cấu trúc chi tiết
+                        if cleaned and href not in match_dict:
+                            match_dict[href] = cleaned
             
             print(f"Lọc được {len(match_dict)} trận đấu hợp lệ.")
             
@@ -78,8 +70,8 @@ def main():
                 match_page.on("request", on_request)
                 
                 try:
-                    match_page.goto(match_url, timeout=20000, wait_until="domcontentloaded")
-                    match_page.wait_for_timeout(4000)
+                    match_page.goto(match_url, timeout=15000, wait_until="domcontentloaded")
+                    match_page.wait_for_timeout(3000)
                 except Exception:
                     pass
                 
@@ -95,7 +87,6 @@ def main():
     except Exception as e:
         print(f"Lỗi tổng quan: {e}")
 
-    # Nếu vẫn không bắt được trận nào, hiển thị thông báo chờ
     if len(playlist) <= 1:
         playlist.append('#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [THÔNG BÁO] Đang chờ trận đấu trực tiếp\n')
         playlist.append('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8\n')
