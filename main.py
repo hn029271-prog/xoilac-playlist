@@ -39,10 +39,17 @@ def main():
             except Exception:
                 pass
             
-            page.wait_for_timeout(10000)
+            page.wait_for_timeout(8000)
             
+            # QUAN TRỌNG: Click vào giữa màn hình để tắt các lớp quảng cáo ẩn / popup đè trang
             try:
-                page.mouse.move(300, 300)
+                page.mouse.click(500, 500)
+                page.wait_for_timeout(2000)
+            except Exception:
+                pass
+            
+            # Cuộn trang để ép tải dữ liệu trận đấu
+            try:
                 page.evaluate("window.scrollBy(0, 800);")
                 page.wait_for_timeout(3000)
             except Exception:
@@ -86,7 +93,14 @@ def main():
                 
                 try:
                     match_page.goto(match_url, timeout=15000, wait_until="domcontentloaded")
-                    match_page.wait_for_timeout(6000)
+                    match_page.wait_for_timeout(4000)
+                    
+                    # Click tiếp vào trang chi tiết trận đấu để kích hoạt nút play/start của video nếu bị quảng cáo che
+                    try:
+                        match_page.mouse.click(600, 400)
+                        match_page.wait_for_timeout(3000)
+                    except Exception:
+                        pass
                     
                     if not stream_url:
                         video_src = match_page.evaluate("() => { const v = document.querySelector('video'); return v ? v.src : null; }")
