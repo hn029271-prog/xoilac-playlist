@@ -11,22 +11,36 @@ def main():
         with sync_playwright() as p:
             browser = p.chromium.launch(
                 headless=True,
-                args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-blink-features=AutomationControlled"]
+                args=[
+                    "--no-sandbox", 
+                    "--disable-dev-shm-usage", 
+                    "--disable-blink-features=AutomationControlled",
+                    "--disable-infobars",
+                    "--window-size=1920,1080"
+                ]
             )
             context = browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-                viewport={"width": 1920, "height": 1080}
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                viewport={"width": 1920, "height": 1080},
+                locale="vi-VN"
             )
             
             page = context.new_page()
             print("Đang truy cập trang chủ xoiche.live...")
-            # Chờ networkidle để đảm bảo trang web load xong toàn bộ dữ liệu JS
-            page.goto(URL, timeout=60000, wait_until="networkidle")
-            page.wait_for_timeout(5000)
+            page.goto(URL, timeout=60000, wait_until="domcontentloaded")
             
-            # Cuộn trang nhiều lần để kích hoạt hiển thị toàn bộ danh sách trận đấu
+            # In tiêu đề trang để kiểm tra xem có bị Cloudflare chặn không
+            try:
+                page_title = page.title()
+                print(f"DEBUG - Tiêu đề trang web: {page_title}")
+            except Exception:
+                pass
+                
+            page.wait_for_timeout(10000) # Chờ đủ lâu để qua lớp kiểm tra bot
+            
+            # Cuộn trang nhiều lần để kích hoạt hiển thị trận đấu
             for _ in range(4):
-                page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
+                page.evaluate("window.scrollBy(0, 1000);")
                 page.wait_for_timeout(2500)
             
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
@@ -37,7 +51,6 @@ def main():
                 text = l['text'].strip()
                 if href and href != URL and 'xoiche.live' in href:
                     lower_href = href.lower()
-                    # Loại bỏ các trang hệ thống không phải trận đấu
                     if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me', 'login', 'register']):
                         match_title = text if len(text) > 3 else href.split('/')[-1].replace('-', ' ').upper()
                         if href not in match_dict:
@@ -47,7 +60,7 @@ def main():
             
             count = 0
             for match_url, title in match_dict.items():
-                if count >= 15: # Lấy tối đa 15 trận đang diễn ra
+                if count >= 15:
                     break
                 
                 stream_url = None
