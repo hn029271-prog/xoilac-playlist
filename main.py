@@ -22,7 +22,6 @@ def main():
     
     try:
         with sync_playwright() as p:
-            # Khởi chạy trình duyệt với cấu hình ẩn danh chống bị phát hiện bot
             browser = p.chromium.launch(
                 headless=True,
                 args=[
@@ -38,8 +37,14 @@ def main():
             
             page = context.new_page()
             print("Đang truy cập trang chủ...")
-            page.goto(URL, timeout=30000)
-            page.wait_for_timeout(6000) # Chờ trang load nội dung JS
+            
+            # Tăng timeout lên 45 giây và đổi cách chờ sang domcontentloaded để không bị nghẽn
+            try:
+                page.goto(URL, timeout=45000, wait_until="domcontentloaded")
+            except Exception as e:
+                print(f"Cảnh báo khi vào trang chủ: {e}")
+                
+            page.wait_for_timeout(5000) # Chờ thêm 5 giây để JS kịp render trận đấu
             
             # Lấy tất cả các thẻ a trên trang
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
@@ -73,7 +78,7 @@ def main():
                 match_page.on("request", on_request)
                 
                 try:
-                    match_page.goto(match_url, timeout=15000)
+                    match_page.goto(match_url, timeout=20000, wait_until="domcontentloaded")
                     match_page.wait_for_timeout(4000)
                 except Exception:
                     pass
