@@ -33,11 +33,9 @@ def main():
             page.goto(URL, timeout=45000, wait_until="domcontentloaded")
             page.wait_for_timeout(6000)
             
-            # Lấy toàn bộ thẻ a để phân tích
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
             print(f"DEBUG - Tổng số link tìm thấy trên trang: {len(links)}")
             
-            # In ra 20 link đầu tiên trong log để xem cấu trúc trang web
             for i, l in enumerate(links[:20]):
                 print(f"Mẫu {i+1}: href='{l['href']}' | text='{l['text'].strip()}'")
             
@@ -48,9 +46,8 @@ def main():
                     if not title or len(title) < 3:
                         title = href.split('/')[-1].replace('-', ' ')
                     cleaned = clean_match_name(title)
-                    # Chấp nhận mọi link con có chứa từ khóa hoặc có cấu trúc chi tiết
-                        if cleaned and href not in match_dict:
-                            match_dict[href] = cleaned
+                    if cleaned and href not in match_dict:
+                        match_dict[href] = cleaned
             
             print(f"Lọc được {len(match_dict)} trận đấu hợp lệ.")
             
