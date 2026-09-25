@@ -2,9 +2,6 @@ from playwright.sync_api import sync_playwright
 import re
 
 URL = "https://xoiche.tv/"
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-}
 
 def clean_match_name(raw_title):
     if not raw_title:
@@ -23,66 +20,75 @@ def main():
     match_dict = {}
     playlist = ["#EXTM3U\n"]
     
-    with sync_playwright() as p:
-        # Khởi chạy trình duyệt ngầm
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(user_agent=headers["User-Agent"])
-        
-        # 1. Quét trang chủ bằng Playwright để lấy danh sách trận đấu động
-        page = context.new_page()
-        try:
-            print("Đang truy cập trang chủ...")
-            page.goto(URL, timeout=20000)
-            page.wait_for_timeout(5000) # Chờ trang load xong dữ liệu JavaScript
+    try:
+        with sync_playwright() as p:
+            # Khởi chạy trình duyệt với cấu hình ẩn danh chống bị phát hiện bot
+            browser = p.chromium.launch(
+                headless=True,
+                args=[
+                    "--disable-blink-features=AutomationControlled",
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                ]
+            )
+            context = browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+                viewport={"width": 1920, "height": 1080}
+            )
             
-            # Lấy tất cả các thẻ a trên trang chủ
+            page = context.new_page()
+            print("Đang truy cập trang chủ...")
+            page.goto(URL, timeout=30000)
+            page.wait_for_timeout(6000) # Chờ trang load nội dung JS
+            
+            # Lấy tất cả các thẻ a trên trang
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
+            print(f"Tổng số link quét được trên trang: {len(links)}")
+            
             for l in links:
                 href = l['href']
-                if '/tran-dau/' in href or '/match/' in href:
+                if href and ('/tran-dau/' in href or '/match/' in href):
                     title = l['text'].strip()
                     if not title or len(title) < 3:
                         title = href.split('/')[-1].replace('-', ' ')
                     cleaned = clean_match_name(title)
                     if cleaned and href not in match_dict:
                         match_dict[href] = cleaned
-        except Exception as e:
-            print(f"Lỗi quét trang chủ: {e}")
-        page.close()
-        
-        print(f"Tìm thấy {len(match_dict)} trận đấu.")
-        
-        # 2. Vào từng trang trận đấu để bắt link .m3u8 thực tế kèm token
-        count = 0
-        for match_url, title in match_dict.items():
-            if count >= 6:  # Lấy tối đa 6 trận để chạy mượt
-                break
             
-            stream_url = None
-            match_page = context.new_page()
+            print(f"Lọc được {len(match_dict)} trận đấu hợp lệ.")
             
-            def on_request(request):
-                nonlocal stream_url
-                if '.m3u8' in request.url and not stream_url:
-                    stream_url = request.url
-
-            match_page.on("request", on_request)
-            
-            try:
-                match_page.goto(match_url, timeout=15000)
-                match_page.wait_for_timeout(4000) # Chờ player kích hoạt stream
-            except Exception:
-                pass
-            
-            match_page.close()
-            
-            if stream_url:
-                stream_url = stream_url.encode().decode('unicode-escape') if '\\u' in stream_url else stream_url
-                playlist.append(f'#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] {title}\n')
-                playlist.append(f'{stream_url}\n')
-                count += 1
+            count = 0
+            for match_url, title in match_dict.items():
+                if count >= 6:
+                    break
                 
-        browser.close()
+                stream_url = None
+                match_page = context.new_page()
+                
+                def on_request(request):
+                    nonlocal stream_url
+                    if '.m3u8' in request.url and not stream_url:
+                        stream_url = request.url
+
+                match_page.on("request", on_request)
+                
+                try:
+                    match_page.goto(match_url, timeout=15000)
+                    match_page.wait_for_timeout(4000)
+                except Exception:
+                    pass
+                
+                match_page.close()
+                
+                if stream_url:
+                    stream_url = stream_url.encode().decode('unicode-escape') if '\\u' in stream_url else stream_url
+                    playlist.append(f'#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] {title}\n')
+                    playlist.append(f'{stream_url}\n')
+                    count += 1
+                    
+            browser.close()
+    except Exception as e:
+        print(f"Lỗi tổng quan: {e}")
 
     # Nếu vẫn không bắt được trận nào, hiển thị thông báo chờ
     if len(playlist) <= 1:
