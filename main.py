@@ -15,33 +15,32 @@ def main():
                     "--no-sandbox", 
                     "--disable-dev-shm-usage", 
                     "--disable-blink-features=AutomationControlled",
-                    "--disable-infobars",
-                    "--window-size=1920,1080"
+                    "--disable-infobars"
                 ]
             )
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-                viewport={"width": 1920, "height": 1080},
-                locale="vi-VN"
+                viewport={"width": 1920, "height": 1080}
             )
             
             page = context.new_page()
             print("Đang truy cập trang chủ xoiche.live...")
-            page.goto(URL, timeout=60000, wait_until="domcontentloaded")
             
-            # In tiêu đề trang để kiểm tra xem có bị Cloudflare chặn không
+            # Sử dụng wait_until="commit" để tránh lỗi timeout khi trang phản hồi chậm
             try:
-                page_title = page.title()
-                print(f"DEBUG - Tiêu đề trang web: {page_title}")
+                page.goto(URL, timeout=30000, wait_until="commit")
+            except Exception as e:
+                print(f"Cảnh báo kết nối: {e}")
+            
+            page.wait_for_timeout(6000)
+            
+            # Cuộn trang nhẹ nhàng để tải dữ liệu
+            try:
+                for _ in range(3):
+                    page.evaluate("window.scrollBy(0, 800);")
+                    page.wait_for_timeout(2000)
             except Exception:
                 pass
-                
-            page.wait_for_timeout(10000) # Chờ đủ lâu để qua lớp kiểm tra bot
-            
-            # Cuộn trang nhiều lần để kích hoạt hiển thị trận đấu
-            for _ in range(4):
-                page.evaluate("window.scrollBy(0, 1000);")
-                page.wait_for_timeout(2500)
             
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
             print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
@@ -74,8 +73,8 @@ def main():
                 match_page.on("request", on_request)
                 
                 try:
-                    match_page.goto(match_url, timeout=15000, wait_until="domcontentloaded")
-                    match_page.wait_for_timeout(4000)
+                    match_page.goto(match_url, timeout=12000, wait_until="commit")
+                    match_page.wait_for_timeout(3000)
                 except Exception:
                     pass
                 
