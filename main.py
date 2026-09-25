@@ -6,10 +6,13 @@ URL = "https://xoiche.tv/"
 def clean_match_name(raw_title):
     if not raw_title:
         return None
+    lower_title = raw_title.lower()
+    if any(keyword in lower_title for keyword in ["nhà đài", "blv", "kênh", "soi kèo", "lịch thi đấu", "trang chủ", "tin tức", "liên hệ"]):
+        return None
     title = re.sub(r'\s+(?:kg|id)?\s*\d+', '', raw_title, flags=re.IGNORECASE)
     title = re.sub(r'[\?#].*', '', title)
     title = title.strip().upper()
-    if len(title) < 3:
+    if len(title) < 4:
         return None
     return title
 
@@ -31,23 +34,29 @@ def main():
             page = context.new_page()
             print("Đang truy cập trang chủ...")
             page.goto(URL, timeout=45000, wait_until="domcontentloaded")
-            page.wait_for_timeout(6000)
+            page.wait_for_timeout(8000) # Chờ để nội dung JavaScript render đầy đủ
+            
+            # Cuộn trang xuống để kích hoạt dữ liệu tải động (nếu có)
+            page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
+            page.wait_for_timeout(3000)
             
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
             print(f"DEBUG - Tổng số link tìm thấy trên trang: {len(links)}")
             
-            for i, l in enumerate(links[:15]):
-                print(f"Mẫu {i+1}: href='{l['href']}' | text='{l['text'].strip()}'")
-            
             for l in links:
                 href = l['href']
                 if href and href != URL:
-                    title = l['text'].strip()
-                    if not title or len(title) < 3:
-                        title = href.split('/')[-1].replace('-', ' ')
-                    cleaned = clean_match_name(title)
-                    if cleaned and href not in match_dict:
-                        match_dict[href] = cleaned
+                    lower_href = href.lower()
+                    # Mở rộng điều kiện nhận diện link trận đấu
+                    is_match_link = any(kw in lower_href for kw in ['/truc-tiep/', '/match/', '/tran-dau/', '-vs-'])
+                    
+                    if is_match_link:
+                        title = l['text'].strip()
+                        if not title or len(title) < 3:
+                            title = href.split('/')[-1].replace('-', ' ').upper()
+                        cleaned = clean_match_name(title)
+                        if cleaned and href not in match_dict:
+                            match_dict[href] = cleaned
             
             print(f"Lọc được {len(match_dict)} trận đấu hợp lệ.")
             
@@ -68,7 +77,7 @@ def main():
                 
                 try:
                     match_page.goto(match_url, timeout=15000, wait_until="domcontentloaded")
-                    match_page.wait_for_timeout(3000)
+                    match_page.wait_for_timeout(4000)
                 except Exception:
                     pass
                 
