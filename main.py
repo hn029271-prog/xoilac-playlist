@@ -1,20 +1,7 @@
 from playwright.sync_api import sync_playwright
 import re
 
-URL = "https://xoiche.tv/"
-
-def clean_match_name(raw_title):
-    if not raw_title:
-        return None
-    lower_title = raw_title.lower()
-    if any(keyword in lower_title for keyword in ["nhà đài", "blv", "kênh", "soi kèo", "lịch thi đấu", "trang chủ", "tin tức", "liên hệ"]):
-        return None
-    title = re.sub(r'\s+(?:kg|id)?\s*\d+', '', raw_title, flags=re.IGNORECASE)
-    title = re.sub(r'[\?#].*', '', title)
-    title = title.strip().upper()
-    if len(title) < 4:
-        return None
-    return title
+URL = "https://xoiche.live/"
 
 def main():
     match_dict = {}
@@ -32,33 +19,29 @@ def main():
             )
             
             page = context.new_page()
-            print("Đang truy cập trang chủ...")
+            print("Đang truy cập trang chủ xoiche.live...")
             page.goto(URL, timeout=45000, wait_until="domcontentloaded")
-            page.wait_for_timeout(8000) # Chờ để nội dung JavaScript render đầy đủ
+            page.wait_for_timeout(10000) # Chờ 10 giây để JavaScript render dữ liệu trận đấu
             
-            # Cuộn trang xuống để kích hoạt dữ liệu tải động (nếu có)
-            page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
-            page.wait_for_timeout(3000)
+            # Cuộn trang xuống để kích hoạt nội dung ẩn/lazy load
+            for _ in range(3):
+                page.evaluate("window.scrollBy(0, 800);")
+                page.wait_for_timeout(2000)
             
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
-            print(f"DEBUG - Tổng số link tìm thấy trên trang: {len(links)}")
+            print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
             
             for l in links:
                 href = l['href']
-                if href and href != URL:
+                text = l['text'].strip()
+                if href and href != URL and 'xoiche.live' in href:
                     lower_href = href.lower()
-                    # Mở rộng điều kiện nhận diện link trận đấu
-                    is_match_link = any(kw in lower_href for kw in ['/truc-tiep/', '/match/', '/tran-dau/', '-vs-'])
-                    
-                    if is_match_link:
-                        title = l['text'].strip()
-                        if not title or len(title) < 3:
-                            title = href.split('/')[-1].replace('-', ' ').upper()
-                        cleaned = clean_match_name(title)
-                        if cleaned and href not in match_dict:
-                            match_dict[href] = cleaned
+                    # Loại bỏ các trang hệ thống không phải trận đấu
+                    if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me']):
+                        if len(text) > 3 or '/' in href.replace(URL, ''):
+                            match_dict[href] = text if len(text) > 3 else href.split('/')[-1].replace('-', ' ').upper()
             
-            print(f"Lọc được {len(match_dict)} trận đấu hợp lệ.")
+            print(f"Lọc được {len(match_dict)} link tiềm năng.")
             
             count = 0
             for match_url, title in match_dict.items():
@@ -85,7 +68,8 @@ def main():
                 
                 if stream_url:
                     stream_url = stream_url.encode().decode('unicode-escape') if '\\u' in stream_url else stream_url
-                    playlist.append(f'#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] {title}\n')
+                    clean_title = re.sub(r'[\n\r\t]+', ' ', title).strip().upper()
+                    playlist.append(f'#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] {clean_title}\n')
                     playlist.append(f'{stream_url}\n')
                     count += 1
                     
