@@ -56,7 +56,7 @@ def main():
             
             count = 0
             for match_url, title in match_dict.items():
-                if count >= 6:  # Lấy tối đa 6 trận để tối ưu tốc độ chạy ngầm
+                if count >= 15 :  # Lấy tối đa 6 trận để tối ưu tốc độ chạy ngầm
                     break
                 
                 stream_url = None
