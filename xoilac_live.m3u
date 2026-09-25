@@ -1,3 +1,27 @@
 #EXTM3U
-#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [THÔNG BÁO] Đang chờ cập nhật trận đấu
-https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 20:00 | 25-09 SẮP DIỄN RA FF ASEAN CUP INDONESIA VS SINGAPORE TAM MAO
+https://livecdn.cdnfastter.xyz/live/livehub8/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 20:00 | 25-09 SẮP DIỄN RA FIFA ASEAN CUP INDONESIA VS SINGAPORE LEE SIN
+https://luong.phaohoa.live/live/phaohoa10/index.m3u8?expire=1815822079&sign=9a0c1792a57466ace2166ab62a2ea149
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 23:00 | 25-09 SẮP DIỄN RA UEFA NATIONS LEAGUE GEORGIA VS NORTHERN IRELAND TÁO DAI
+https://livecdn.cdnfastter.xyz/live/livehub1/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 23:00 | 25-09 SẮP DIỄN RA UEFA NATIONS LEAGUE ARMENIA VS LATVIA KỀN KỀN
+https://luong.phaohoa.live/live/phaohoa6/index.m3u8?expire=1815505159&sign=16059952b038cc8982ab6d1980711dc9
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 01:45 | 26-09 SẮP DIỄN RA UEFA NATIONS LEAGUE BA LAN VS BOSNIA & HERZEGOVINA XÔI XOÀI
+https://livecdn.cdnfastter.xyz/live/livehub3/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 01:45 | 26-09 SẮP DIỄN RA UEFA NATIONS LEAGUE ITALY VS BỈ KHÔ CAY
+https://livecdn.cdnfastter.xyz/live/livehub9/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 01:45 | 26-09 SẮP DIỄN RA UEFA NATIONS LEAGUE THỔ NHĨ KỲ VS PHÁP TAM MAO
+https://livecdn.cdnfastter.xyz/live/livehub8/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 01:45 | 26-09 SẮP DIỄN RA UEFA NATIONS LEAGUE HUNGARY VS UKRAINE TÁO DAI
+https://livecdn.cdnfastter.xyz/live/livehub1/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 02:00 | 26-09 SẮP DIỄN RA VL CAN CUP MOROCCO VS GABON GÀ RỪNG
+https://livecdn.cdnfastter.xyz/live/livehub4/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 17:30 | 26-09 SẮP DIỄN RA ASIAN GAMES JAPAN U23 VS NORTH KOREA U23 XÔI XOÀI
+https://livecdn.cdnfastter.xyz/live/livehub3/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 18:30 | 26-09 SẮP DIỄN RA FF ASEAN CUP VIỆT NAM VS PHILIPPINES KHÔ CHÈ
+https://livecdn.cdnfastter.xyz/live/livehub5/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 19:30 | 26-09 SẮP DIỄN RA FIFA ASEAN CUP VIỆT NAM VS PHILIPPINES TÀY
+https://luong.phaohoa.live/live/phaohoa8/index.m3u8?expire=1815822079&sign=9a0c1792a57466ace2166ab62a2ea149
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 19:30 | 26-09 SẮP DIỄN RA FIFA ASEAN CUP VIỆT NAM VS PHILIPPINES LEE SIN
+https://luong.phaohoa.live/live/phaohoa10/index.m3u8?expire=1815822079&sign=9a0c1792a57466ace2166ab62a2ea149
