@@ -12,35 +12,47 @@ def main():
             browser = p.chromium.launch(
                 headless=True,
                 args=[
-                    "--no-sandbox", 
-                    "--disable-dev-shm-usage", 
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-accelerated-2d-canvas",
+                    "--disable-gpu",
                     "--disable-blink-features=AutomationControlled",
-                    "--disable-infobars"
+                    "--ignore-certificate-errors"
                 ]
             )
             context = browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-                viewport={"width": 1920, "height": 1080}
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+                viewport={"width": 1920, "height": 1080},
+                device_scale_factor=1,
+                is_mobile=False,
+                has_touch=False
             )
             
+            # Thêm extra HTTP headers để giả lập trình duyệt thật 100%
+            context.set_extra_http_headers({
+                "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Connection": "keep-alive"
+            })
+            
             page = context.new_page()
-            print("Đang truy cập trang chủ xoiche.live...")
+            print("Đang truy cập trang chủ xoiche.live qua lớp giả lập...")
             
-            # Sử dụng wait_until="commit" để tránh lỗi timeout khi trang phản hồi chậm
             try:
-                page.goto(URL, timeout=30000, wait_until="commit")
+                page.goto(URL, timeout=45000, wait_until="domcontentloaded")
             except Exception as e:
-                print(f"Cảnh báo kết nối: {e}")
+                print(f"Thử tải lại lần 2 do mạng chậm: {e}")
+                page.goto(URL, timeout=45000, wait_until="commit")
             
-            page.wait_for_timeout(6000)
+            # Chờ thêm thời gian để Cloudflare xác thực ẩn và JS render trận đấu
+            print("Đang chờ nội dung trận đấu hiển thị...")
+            page.wait_for_timeout(8000)
             
-            # Cuộn trang nhẹ nhàng để tải dữ liệu
-            try:
-                for _ in range(3):
-                    page.evaluate("window.scrollBy(0, 800);")
-                    page.wait_for_timeout(2000)
-            except Exception:
-                pass
+            # Cuộn trang từ từ để kích hoạt tải dữ liệu động (Lazy load)
+            for i in range(3):
+                page.evaluate(f"window.scrollTo(0, {(i+1) * 600});")
+                page.wait_for_timeout(2000)
             
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
             print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
@@ -50,7 +62,8 @@ def main():
                 text = l['text'].strip()
                 if href and href != URL and 'xoiche.live' in href:
                     lower_href = href.lower()
-                    if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me', 'login', 'register']):
+                    # Lọc bỏ các trang rác, hệ thống
+                    if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me', 'login', 'register', 'highlight']):
                         match_title = text if len(text) > 3 else href.split('/')[-1].replace('-', ' ').upper()
                         if href not in match_dict:
                             match_dict[href] = match_title
@@ -73,8 +86,8 @@ def main():
                 match_page.on("request", on_request)
                 
                 try:
-                    match_page.goto(match_url, timeout=12000, wait_until="commit")
-                    match_page.wait_for_timeout(3000)
+                    match_page.goto(match_url, timeout=15000, wait_until="commit")
+                    match_page.wait_for_timeout(3500)
                 except Exception:
                     pass
                 
