@@ -28,10 +28,13 @@ def main():
             
             page.wait_for_timeout(4000)
             
-            # Cuộn trang nhanh để kích hoạt các trận đấu
-            for _ in range(2):
-                page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
-                page.wait_for_timeout(1500)
+            # Cuộn trang an toàn bằng window.scrollBy để tránh lỗi null body
+            for _ in range(3):
+                try:
+                    page.evaluate("window.scrollBy(0, 800);")
+                    page.wait_for_timeout(1500)
+                except Exception:
+                    pass
             
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
             print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
@@ -50,7 +53,7 @@ def main():
             
             count = 0
             for match_url, title in match_dict.items():
-                if count >= 10: # Lấy tối đa 10 trận để chạy cực nhanh
+                if count >= 10: # Lấy tối đa 10 trận để chạy mượt mà
                     break
                 
                 stream_url = None
