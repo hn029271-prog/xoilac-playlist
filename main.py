@@ -3,32 +3,83 @@ from playwright.sync_api import sync_playwright
 
 URL = "https://xoiche.live/"
 
-def clean_team_name(text):
-    # Quét sạch 100% các cụm ngày giờ bất chấp định dạng (25:09, 25/09, 25-09...)
-    text = re.sub(r'\d{1,2}[:/\-]\d{1,2}([:/\-]\d{2,4})?', '', text)
-    
-    # Xóa các con số lạc lõng đứng đầu câu (phòng hờ ngày tháng bị vỡ)
-    text = re.sub(r'^\s*\d+\s*', '', text)
-    
-    # Xóa các từ rác phổ biến và tên giải đấu
-    trash_words = [
-        'SẮP DIỄN RA', '[LIVE]', 'LIVE', 'TRỰC TIẾP', 'BÓNG ĐÁ', 'ĐANG ĐÁ', 'NGHỈ GIỮA HIỆP', 'HT', 'FT', 'HẾT GIỜ', 'VS',
-        'UEFA NATIONS LEAGUE', 'NATIONS LEAGUE', 'CHAMPIONS LEAGUE', 'EUROPA LEAGUE', 'PREMIER LEAGUE',
-        'NGOẠI HẠNG ANH', 'LA LIGA', 'SERIE A', 'LIGUE 1', 'BUNDESLIGA', 'VÒNG LOẠI', 'GIAO HỮU', 'CÚP', 'VÒNG'
+def process_match_title(raw_text):
+    text = raw_text.upper().replace('\n', ' ')
+
+    # 1. Bỏ ngay các trận chưa đá / lịch tương lai
+    if any(w in text for w in ["SẮP DIỄN RA", "HÔM NAY", "LỊCH THI ĐẤU"]):
+        return None
+
+    # 2. Lấy số phút thi đấu trước (VD: 86', 45+2', HT, FT)
+    minute = ""
+    min_match = re.search(r"(\d{1,3}(?:\+\d+)?\s*')", text)
+    if min_match:
+        minute = min_match.group(1).replace(' ', '')
+        text = text.replace(min_match.group(0), ' ')
+    elif "HT" in text or "NGHỈ GIỮA HIỆP" in text:
+        minute = "HT"
+    elif "FT" in text or "HẾT GIỜ" in text:
+        minute = "FT"
+    elif "ĐANG ĐÁ" in text or "LIVE" in text:
+        minute = "LIVE"
+
+    # 3. TRIỆT TÁC: Xóa Ngày/Tháng (25-09, 25/09) & Giờ (23:00) TRƯỚC KHI TÌM TỈ SỐ!
+    text = re.sub(r'\b\d{1,2}[-/.]\d{1,2}([-/.]\d{2,4})?\b', ' ', text)
+    text = re.sub(r'\b\d{1,2}:\d{2}\b', ' ', text)
+
+    # 4. Tìm tỉ số thực sự của trận đấu (VD: 2-1, 1-0, 0-0)
+    score_match = re.search(r'(\d+)\s*[-:]\s*(\d+)', text)
+
+    # Không có cả Tỉ số LẪN Phút = Trận chưa đá -> Bỏ luôn
+    if not score_match and not minute:
+        return None
+
+    # 5. Danh sách từ rác cần dọn dẹp (Giải đấu, BLV, Trực tiếp...)
+    trash_patterns = [
+        r'\[LIVE\]', r'\bLIVE\b', r'TRỰC TIẾP', r'BÓNG ĐÁ', r'ĐANG ĐÁ', r'NGHỈ GIỮA HIỆP',
+        r'\bHT\b', r'\bFT\b', r'HẾT GIỜ', r'SẮP DIỄN RA', r'HÔM NAY', r'VS',
+        r'UEFA NATIONS LEAGUE', r'NATIONS LEAGUE', r'CHAMPIONS LEAGUE', r'EUROPA LEAGUE',
+        r'PREMIER LEAGUE', r'NGOẠI HẠNG ANH', r'LA LIGA', r'SERIE A', r'LIGUE 1', r'BUNDESLIGA',
+        r'VÒNG LOẠI', r'GIAO HỮU', r'CÚP QUỐC GIA', r'CÚP C1', r'CÚP C2', r'CÚP C3', r'VÒNG\s+\d+'
     ]
-    for t in trash_words:
-        text = re.sub(r'\b' + t + r'\b', '', text, flags=re.IGNORECASE)
-        text = text.replace(f'[{t}]', '')
-        
-    # Xóa phần tên BLV trở về sau
-    text = re.sub(r'BLV\s+.*', '', text)
-    # Xóa phút thi đấu nếu còn sót
-    text = re.sub(r"\d{1,3}'", '', text)
-    # Dọn dẹp ký tự thừa (dấu gạch, ngoặc, hai chấm)
-    text = re.sub(r'[\|\[\]\(\)\-\:]', ' ', text)
-    # Xóa khoảng trắng thừa
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
+
+    if score_match:
+        parts = re.split(r'\d+\s*[-:]\s*\d+', text, maxsplit=1)
+        team_a_raw = parts[0]
+        team_b_raw = parts[1]
+        score_a = score_match.group(1)
+        score_b = score_match.group(2)
+
+        def clean_sub(s):
+            s = re.sub(r'BLV\s+.*', ' ', s, flags=re.IGNORECASE)
+            for tp in trash_patterns:
+                s = re.sub(tp, ' ', s, flags=re.IGNORECASE)
+            s = re.sub(r'[\|\[\]\(\)\-\:\']', ' ', s)
+            s = re.sub(r'\s+', ' ', s).strip()
+            return s
+
+        team_a = clean_sub(team_a_raw)
+        team_b = clean_sub(team_b_raw)
+
+        if not team_a or not team_b:
+            return None
+
+        title = f"{team_a} {score_a}-{score_b} {team_b}"
+    else:
+        def clean_all(s):
+            s = re.sub(r'BLV\s+.*', ' ', s, flags=re.IGNORECASE)
+            for tp in trash_patterns:
+                s = re.sub(tp, ' ', s, flags=re.IGNORECASE)
+            s = re.sub(r'[\|\[\]\(\)\-\:\']', ' ', s)
+            s = re.sub(r'\s+', ' ', s).strip()
+            return s
+        title = clean_all(text)
+
+    # Gắn thêm phút trực tiếp nếu có
+    if minute:
+        title += f" | {minute}"
+
+    return title
 
 def main():
     match_dict = {}
@@ -68,48 +119,15 @@ def main():
                 
             for l in links:
                 href = l['href']
-                raw_text = l['text'].strip().upper().replace('\n', ' ')
+                raw_text = l['text'].strip()
                 
                 if href and href != URL and 'xoiche.live' in href:
                     if any(x in href.lower() for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'telegram', 'login', 'register']):
                         continue
                         
-                    if "SẮP DIỄN RA" in raw_text or "HÔM NAY" in raw_text:
-                        continue
-
-                    score_match = re.search(r'(\d+)\s*-\s*(\d+)', raw_text)
-                    min_match = re.search(r"(\d{1,3}\s*')", raw_text)
-                    
-                    minute = ""
-                    if min_match:
-                        minute = min_match.group(1).replace(' ', '')
-                    elif "HT" in raw_text or "NGHỈ GIỮA HIỆP" in raw_text:
-                        minute = "HT"
-                    elif "FT" in raw_text or "HẾT GIỜ" in raw_text:
-                        minute = "FT"
-                    elif "ĐANG ĐÁ" in raw_text:
-                        minute = "LIVE"
-
-                    if not score_match and not minute:
-                        continue
-                        
-                    if score_match:
-                        parts = re.split(r'\d+\s*-\s*\d+', raw_text, maxsplit=1)
-                        team_a = clean_team_name(parts[0])
-                        team_b = clean_team_name(parts[1])
-                        score_a = score_match.group(1)
-                        score_b = score_match.group(2)
-                        
-                        # Đổi dấu ":" thành "-" để tránh lỗi ẩn ký tự trên app RomCloud
-                        final_name = f"{team_a} {score_a} - {score_b} {team_b}"
-                    else:
-                        final_name = clean_team_name(raw_text)
-
-                    if minute:
-                        final_name += f" | {minute}"
-                        
-                    if final_name.replace(f" | {minute}", "").strip() and href not in match_dict:
-                        match_dict[href] = final_name.strip()
+                    clean_title = process_match_title(raw_text)
+                    if clean_title and href not in match_dict:
+                        match_dict[href] = clean_title
             
             count = 0
             for match_url, title in match_dict.items():
