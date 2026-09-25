@@ -1,11 +1,16 @@
-from playwright.sync_api import sync_playwright
 import re
+from datetime import datetime, timedelta, timezone
+from playwright.sync_api import sync_playwright
 
 URL = "https://xoiche.live/"
 
 def main():
     match_dict = {}
     playlist = ["#EXTM3U\n"]
+    
+    # Thiết lập múi giờ Việt Nam (UTC+7) để bộ đếm giờ hoạt động chuẩn xác
+    vn_tz = timezone(timedelta(hours=7))
+    now = datetime.now(vn_tz)
     
     try:
         with sync_playwright() as p:
@@ -41,14 +46,12 @@ def main():
             
             page.wait_for_timeout(8000)
             
-            # QUAN TRỌNG: Click vào giữa màn hình để tắt các lớp quảng cáo ẩn / popup đè trang
             try:
                 page.mouse.click(500, 500)
                 page.wait_for_timeout(2000)
             except Exception:
                 pass
             
-            # Cuộn trang để ép tải dữ liệu trận đấu
             try:
                 page.evaluate("window.scrollBy(0, 800);")
                 page.wait_for_timeout(3000)
@@ -65,15 +68,72 @@ def main():
             
             for l in links:
                 href = l['href']
-                text = l['text'].strip()
+                raw_text = l['text'].strip().upper()
+                
                 if href and href != URL and 'xoiche.live' in href:
                     lower_href = href.lower()
                     if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me', 'login', 'register', 'highlight']):
-                        match_title = text if len(text) > 3 else href.split('/')[-1].replace('-', ' ').upper()
+                        
+                        # ==========================================
+                        # 1. BỘ LỌC THỜI GIAN: LOẠI BỎ TRẬN CHƯA ĐÁ
+                        # ==========================================
+                        time_match = re.search(r'(\d{1,2}):(\d{2})', raw_text)
+                        date_match = re.search(r'(\d{1,2})[-/](\d{1,2})', raw_text)
+                        
+                        is_live = False
+                        if time_match and date_match:
+                            match_hour = int(time_match.group(1))
+                            match_minute = int(time_match.group(2))
+                            match_day = int(date_match.group(1))
+                            match_month = int(date_match.group(2))
+                            
+                            try:
+                                match_time = datetime(now.year, match_month, match_day, match_hour, match_minute, tzinfo=vn_tz)
+                                
+                                # Tính toán chênh lệch thời gian so với hiện tại (phút)
+                                time_diff = (now - match_time).total_seconds() / 60
+                                
+                                # CHỈ LẤY: Các trận bắt đầu trước đây tối đa 180 phút, hoặc sẽ đá trong 15 phút tới
+                                if -15 <= time_diff <= 180:
+                                    is_live = True
+                            except Exception:
+                                is_live = True 
+                        else:
+                            # Không có thời gian hiển thị thì tìm dấu hiệu trận đang đá (số phút, tỉ số...)
+                            if re.search(r'\d+\s*-\s*\d+', raw_text) or re.search(r"\d+'", raw_text) or "ĐANG ĐÁ" in raw_text or "HT" in raw_text or " VS " in raw_text:
+                                is_live = True
+                                
+                        # Bỏ qua luôn trận này nếu phát hiện là trận tương lai
+                        if not is_live:
+                            continue
+                            
+                        # ==========================================
+                        # 2. LÀM SẠCH TÊN TRẬN (Chỉ giữ Đội A vs Đội B)
+                        # ==========================================
+                        clean_name = raw_text
+                        
+                        # Xóa cụm giờ (VD: 23:00) và ngày (VD: 25-09)
+                        clean_name = re.sub(r'\d{1,2}:\d{2}', '', clean_name)
+                        clean_name = re.sub(r'\d{1,2}[-/]\d{1,2}([-/]\d{2,4})?', '', clean_name)
+                        # Xóa cụm phút thi đấu (VD: 26')
+                        clean_name = re.sub(r"\d+'", '', clean_name)
+                        
+                        # Xóa các từ thừa thải
+                        for w in ['[LIVE]', 'LIVE', 'TRỰC TIẾP', 'BÓNG ĐÁ', 'XEM LẠI', 'SẮP DIỄN RA', 'HÔM NAY', 'GIẢI', 'VÒNG', 'BẢNG']:
+                            clean_name = clean_name.replace(w, '')
+                            
+                        # Dọn dẹp ký tự rác (dấu gạch, khoảng trắng kép)
+                        clean_name = re.sub(r'[\|\[\]]', '', clean_name)
+                        clean_name = re.sub(r'^\s*[-:]*\s*', '', clean_name)
+                        clean_name = re.sub(r'\s+', ' ', clean_name).strip()
+                        
+                        if not clean_name:
+                            clean_name = href.split('/')[-1].replace('-', ' ').upper()
+                        
                         if href not in match_dict:
-                            match_dict[href] = match_title
+                            match_dict[href] = clean_name
             
-            print(f"Lọc được tổng cộng {len(match_dict)} trận đấu tiềm năng.")
+            print(f"Lọc được tổng cộng {len(match_dict)} trận đấu ĐANG DIỄN RA.")
             
             count = 0
             for match_url, title in match_dict.items():
@@ -95,7 +155,6 @@ def main():
                     match_page.goto(match_url, timeout=15000, wait_until="domcontentloaded")
                     match_page.wait_for_timeout(4000)
                     
-                    # Click tiếp vào trang chi tiết trận đấu để kích hoạt nút play/start của video nếu bị quảng cáo che
                     try:
                         match_page.mouse.click(600, 400)
                         match_page.wait_for_timeout(3000)
@@ -113,18 +172,19 @@ def main():
                 
                 if stream_url:
                     stream_url = stream_url.encode().decode('unicode-escape') if '\\u' in stream_url else stream_url
-                    clean_title = re.sub(r'[\n\r\t]+', ' ', title).strip().upper()
-                    playlist.append(f'#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] {clean_title}\n')
+                    
+                    # Định dạng lại tên gọn gàng cho app M3U
+                    playlist.append(f'#EXTINF:-1 group-title="Bóng Đá", {title}\n')
                     playlist.append(f'{stream_url}\n')
                     count += 1
-                    print(f"-> Đã lấy thành công link trận: {clean_title}")
+                    print(f"-> Đã lấy thành công trận: {title}")
                     
             browser.close()
     except Exception as e:
         print(f"Lỗi tổng quan: {e}")
 
     if len(playlist) <= 1:
-        playlist.append('#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [THÔNG BÁO] Đang chờ cập nhật trận đấu\n')
+        playlist.append('#EXTINF:-1 group-title="Bóng Đá", Hiện chưa có trận đấu nào đang diễn ra\n')
         playlist.append('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8\n')
 
     with open("xoilac_live.m3u", "w", encoding="utf-8") as f:
