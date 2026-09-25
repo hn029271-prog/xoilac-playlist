@@ -1,27 +1,27 @@
 #EXTM3U
-#EXTINF:-1 group-title="Bóng Đá", BA LAN 0-0 BOSNIA & HERZEGOVINA XÔI XOÀI | 42'
-https://livecdn.cdnfastter.xyz/live/livehub3/index.m3u8
-#EXTINF:-1 group-title="Bóng Đá", BA LAN 0-0 BOSNIA & HERZEGOVINA ENZO | 42'
-https://luong.phaohoa.live/live/phaohoa2/index.m3u8?expire=1815505159&sign=d3bfcbaa36f949863f22cc89e1cc1afa
-#EXTINF:-1 group-title="Bóng Đá", ITALY 0-1 BỈ LEE SIN | 41'
-https://luong.phaohoa.live/live/phaohoa10/index.m3u8?expire=1815822079&sign=9a0c1792a57466ace2166ab62a2ea149
-#EXTINF:-1 group-title="Bóng Đá", ITALY 0-1 BỈ KHÔ CAY | 41'
+#EXTINF:-1 group-title="Bóng Đá", ITALY 0-1 BỈ KHÔ CAY | HT
 https://livecdn.cdnfastter.xyz/live/livehub9/index.m3u8
-#EXTINF:-1 group-title="Bóng Đá", THỔ NHĨ KỲ 0-0 PHÁP TAM MAO | 41'
+#EXTINF:-1 group-title="Bóng Đá", ITALY 0-1 BỈ LEE SIN | HT
+https://luong.phaohoa.live/live/phaohoa10/index.m3u8?expire=1815822079&sign=9a0c1792a57466ace2166ab62a2ea149
+#EXTINF:-1 group-title="Bóng Đá", THỔ NHĨ KỲ 0-0 PHÁP CHIM NHỎ | HT
 https://livecdn.cdnfastter.xyz/live/livehub8/index.m3u8
-#EXTINF:-1 group-title="Bóng Đá", THỔ NHĨ KỲ 0-0 PHÁP CHIM NHỎ | 41'
-https://luong.phaohoa.live/live/phaohoa5/index.m3u8?expire=1815505159&sign=67cc5bcdcabb081229f5406e5b07483d
-#EXTINF:-1 group-title="Bóng Đá", HUNGARY 0-0 UKRAINE PHÁO THỦ | 33'
+#EXTINF:-1 group-title="Bóng Đá", THỔ NHĨ KỲ 0-0 PHÁP TAM MAO | HT
+https://livecdn.cdnfastter.xyz/live/livehub8/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá", HUNGARY 0-1 UKRAINE TÁO DAI | HT
 https://luong.phaohoa.live/live/phaohoa4/index.m3u8?expire=1815505159&sign=faaa23580764370ed378ecd708c9f262
-#EXTINF:-1 group-title="Bóng Đá", HUNGARY 0-0 UKRAINE TÁO DAI | 33'
+#EXTINF:-1 group-title="Bóng Đá", HUNGARY 0-1 UKRAINE PHÁO THỦ | HT
 https://luong.phaohoa.live/live/phaohoa4/index.m3u8?expire=1815505159&sign=faaa23580764370ed378ecd708c9f262
-#EXTINF:-1 group-title="Bóng Đá", THỤY ĐIỂN 1-1 ROMANIA KHÔ CHÈ | 38'
+#EXTINF:-1 group-title="Bóng Đá", THỤY ĐIỂN 2-1 ROMANIA KHÔ CHÈ | HT
 https://livecdn.cdnfastter.xyz/live/livehub5/index.m3u8
-#EXTINF:-1 group-title="Bóng Đá", THỤY ĐIỂN 1-1 ROMANIA TÀY | 38'
+#EXTINF:-1 group-title="Bóng Đá", THỤY ĐIỂN 2-1 ROMANIA TÀY | HT
 https://luong.phaohoa.live/live/phaohoa8/index.m3u8?expire=1815822079&sign=9a0c1792a57466ace2166ab62a2ea149
-#EXTINF:-1 group-title="Bóng Đá", AFRICA CUP OF NATIONS QUALIFICATION EGYPT 0-0 ANGOLA TIỂU MÂY | 20'
+#EXTINF:-1 group-title="Bóng Đá", AFRICA CUP OF NATIONS QUALIFICATION EGYPT 0-0 ANGOLA TIỂU MÂY | 26'
 https://luong.phaohoa.live/live/phaohoa9/index.m3u8?expire=1815822079&sign=9a0c1792a57466ace2166ab62a2ea149
-#EXTINF:-1 group-title="Bóng Đá", VL CAN CUP MOROCCO 0-0 GABON KỀN KỀN | 21'
-https://luong.phaohoa.live/live/phaohoa6/index.m3u8?expire=1815505159&sign=16059952b038cc8982ab6d1980711dc9
-#EXTINF:-1 group-title="Bóng Đá", VL CAN CUP MOROCCO 0-0 GABON GÀ RỪNG | 21'
+#EXTINF:-1 group-title="Bóng Đá", VL CAN CUP MOROCCO 0-0 GABON GÀ RỪNG | 35'
 https://livecdn.cdnfastter.xyz/live/livehub4/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá", VL CAN CUP MOROCCO 0-0 GABON KỀN KỀN | 35'
+https://luong.phaohoa.live/live/phaohoa6/index.m3u8?expire=1815505159&sign=16059952b038cc8982ab6d1980711dc9
+#EXTINF:-1 group-title="Bóng Đá", BA LAN 0-0 BOSNIA & HERZEGOVINA XÔI XOÀI | HT
+https://livecdn.cdnfastter.xyz/live/livehub3/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá", BA LAN 0-0 BOSNIA & HERZEGOVINA ENZO | HT
+https://luong.phaohoa.live/live/phaohoa2/index.m3u8?expire=1815505159&sign=d3bfcbaa36f949863f22cc89e1cc1afa
