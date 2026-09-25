@@ -11,34 +11,55 @@ def main():
         with sync_playwright() as p:
             browser = p.chromium.launch(
                 headless=True,
-                args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-blink-features=AutomationControlled"]
+                args=[
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-accelerated-2d-canvas",
+                    "--disable-gpu",
+                    "--disable-blink-features=AutomationControlled",
+                    "--ignore-certificate-errors"
+                ]
             )
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-                viewport={"width": 1920, "height": 1080}
+                viewport={"width": 1920, "height": 1080},
+                locale="vi-VN",
+                timezone_id="Asia/Ho_Chi_Minh",
+                device_scale_factor=1
             )
             
+            # QUAN TRỌNG: Xóa dấu vết tự động để qua mặt Cloudflare
+            context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
+            
             page = context.new_page()
-            print("Đang truy cập trang chủ xoiche.live...")
+            print("Đang truy cập trang chủ xoiche.live với chế độ vượt bot...")
             
             try:
-                page.goto(URL, timeout=30000, wait_until="domcontentloaded")
+                page.goto(URL, timeout=35000, wait_until="domcontentloaded")
+            except Exception as e:
+                print(f"Cảnh báo kết nối: {e}")
+            
+            # Đợi thời gian để Cloudflare xác thực ẩn và nội dung render xong
+            print("Đang chờ xác thực và tải danh sách trận đấu...")
+            page.wait_for_timeout(10000)
+            
+            # Giả lập hành động di chuyển chuột để qua mặt bộ kiểm tra hành vi
+            try:
+                page.mouse.move(300, 300)
+                page.mouse.down()
+                page.mouse.up()
+                page.evaluate("window.scrollBy(0, 600);")
+                page.wait_for_timeout(3000)
             except Exception:
                 pass
             
-            # Đợi đủ 9 giây để JavaScript của trang kịp render danh sách trận đấu ra HTML
-            print("Đang chờ trang hiển thị đầy đủ danh sách trận đấu...")
-            page.wait_for_timeout(9000)
-            
-            # Cuộn trang an toàn xuống dưới để ép trang tải các trận phía dưới
-            for _ in range(3):
-                try:
-                    page.evaluate("window.scrollBy(0, 1000);")
-                    page.wait_for_timeout(2000)
-                except Exception:
-                    pass
-            
-            links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
+            links = []
+            try:
+                links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
+            except Exception as e:
+                print(f"Lỗi quét link: {e}")
+                
             print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
             
             for l in links:
@@ -55,7 +76,7 @@ def main():
             
             count = 0
             for match_url, title in match_dict.items():
-                if count >= 15: # Lấy tối đa 15 trận
+                if count >= 12: # Lấy tối đa 12 trận
                     break
                 
                 stream_url = None
@@ -69,8 +90,8 @@ def main():
                 match_page.on("request", on_request)
                 
                 try:
-                    match_page.goto(match_url, timeout=10000, wait_until="domcontentloaded")
-                    match_page.wait_for_timeout(3000)
+                    match_page.goto(match_url, timeout=12000, wait_until="domcontentloaded")
+                    match_page.wait_for_timeout(3500)
                 except Exception:
                     pass
                 
@@ -88,7 +109,7 @@ def main():
         print(f"Lỗi tổng quan: {e}")
 
     if len(playlist) <= 1:
-        playlist.append('#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [THÔNG BÁO] Đang chờ trận đấu trực tiếp\n')
+        playlist.append('#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [THÔNG BÁO] Đang chờ cập nhật trận đấu\n')
         playlist.append('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8\n')
 
     with open("xoilac_live.m3u", "w", encoding="utf-8") as f:
