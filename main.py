@@ -29,27 +29,21 @@ def main():
                 device_scale_factor=1
             )
             
-            # QUAN TRỌNG: Xóa dấu vết tự động để qua mặt Cloudflare
             context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
             
             page = context.new_page()
-            print("Đang truy cập trang chủ xoiche.live với chế độ vượt bot...")
+            print("Đang truy cập trang chủ xoiche.live...")
             
             try:
                 page.goto(URL, timeout=35000, wait_until="domcontentloaded")
-            except Exception as e:
-                print(f"Cảnh báo kết nối: {e}")
+            except Exception:
+                pass
             
-            # Đợi thời gian để Cloudflare xác thực ẩn và nội dung render xong
-            print("Đang chờ xác thực và tải danh sách trận đấu...")
             page.wait_for_timeout(10000)
             
-            # Giả lập hành động di chuyển chuột để qua mặt bộ kiểm tra hành vi
             try:
                 page.mouse.move(300, 300)
-                page.mouse.down()
-                page.mouse.up()
-                page.evaluate("window.scrollBy(0, 600);")
+                page.evaluate("window.scrollBy(0, 800);")
                 page.wait_for_timeout(3000)
             except Exception:
                 pass
@@ -57,8 +51,8 @@ def main():
             links = []
             try:
                 links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
-            except Exception as e:
-                print(f"Lỗi quét link: {e}")
+            except Exception:
+                pass
                 
             print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
             
@@ -76,7 +70,7 @@ def main():
             
             count = 0
             for match_url, title in match_dict.items():
-                if count >= 12: # Lấy tối đa 12 trận
+                if count >= 15:
                     break
                 
                 stream_url = None
@@ -84,14 +78,22 @@ def main():
                 
                 def on_request(request):
                     nonlocal stream_url
-                    if '.m3u8' in request.url and not stream_url:
+                    req_lower = request.url.lower()
+                    if not stream_url and any(kw in req_lower for kw in ['.m3u8', 'master.m3u8', 'playlist.m3u8', 'index.m3u8']):
                         stream_url = request.url
 
                 match_page.on("request", on_request)
                 
                 try:
-                    match_page.goto(match_url, timeout=12000, wait_until="domcontentloaded")
-                    match_page.wait_for_timeout(3500)
+                    match_page.goto(match_url, timeout=15000, wait_until="domcontentloaded")
+                    # Tăng thời gian chờ để player render và phát sinh request stream
+                    match_page.wait_for_timeout(6000)
+                    
+                    # Phương án phụ: quét thẻ video trực tiếp nếu request chưa bắt được
+                    if not stream_url:
+                        video_src = match_page.evaluate("() => { const v = document.querySelector('video'); return v ? v.src : null; }")
+                        if video_src and 'http' in video_src:
+                            stream_url = video_src
                 except Exception:
                     pass
                 
@@ -103,11 +105,13 @@ def main():
                     playlist.append(f'#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] {clean_title}\n')
                     playlist.append(f'{stream_url}\n')
                     count += 1
+                    print(f"-> Đã lấy thành công link trận: {clean_title}")
                     
             browser.close()
     except Exception as e:
         print(f"Lỗi tổng quan: {e}")
 
+    # Chỉ dùng fallback nếu hoàn toàn không bắt được trận nào
     if len(playlist) <= 1:
         playlist.append('#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [THÔNG BÁO] Đang chờ cập nhật trận đấu\n')
         playlist.append('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8\n')
@@ -117,4 +121,4 @@ def main():
     print("Đã cập nhật danh sách M3U thành công!")
 
 if __name__ == "__main__":
-    main()
+main()
