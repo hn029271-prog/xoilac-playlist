@@ -20,13 +20,14 @@ def main():
             
             page = context.new_page()
             print("Đang truy cập trang chủ xoiche.live...")
-            page.goto(URL, timeout=45000, wait_until="domcontentloaded")
-            page.wait_for_timeout(10000) # Chờ 10 giây để JavaScript render dữ liệu trận đấu
+            # Chờ networkidle để đảm bảo trang web load xong toàn bộ dữ liệu JS
+            page.goto(URL, timeout=60000, wait_until="networkidle")
+            page.wait_for_timeout(5000)
             
-            # Cuộn trang xuống để kích hoạt nội dung ẩn/lazy load
-            for _ in range(3):
-                page.evaluate("window.scrollBy(0, 800);")
-                page.wait_for_timeout(2000)
+            # Cuộn trang nhiều lần để kích hoạt hiển thị toàn bộ danh sách trận đấu
+            for _ in range(4):
+                page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
+                page.wait_for_timeout(2500)
             
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
             print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
@@ -37,15 +38,16 @@ def main():
                 if href and href != URL and 'xoiche.live' in href:
                     lower_href = href.lower()
                     # Loại bỏ các trang hệ thống không phải trận đấu
-                    if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me']):
-                        if len(text) > 3 or '/' in href.replace(URL, ''):
-                            match_dict[href] = text if len(text) > 3 else href.split('/')[-1].replace('-', ' ').upper()
+                    if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me', 'login', 'register']):
+                        match_title = text if len(text) > 3 else href.split('/')[-1].replace('-', ' ').upper()
+                        if href not in match_dict:
+                            match_dict[href] = match_title
             
-            print(f"Lọc được {len(match_dict)} link tiềm năng.")
+            print(f"Lọc được tổng cộng {len(match_dict)} trận đấu tiềm năng.")
             
             count = 0
             for match_url, title in match_dict.items():
-                if count >= 6:
+                if count >= 15: # Lấy tối đa 15 trận đang diễn ra
                     break
                 
                 stream_url = None
