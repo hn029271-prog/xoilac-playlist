@@ -36,7 +36,7 @@ def main():
             links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
             print(f"DEBUG - Tổng số link tìm thấy trên trang: {len(links)}")
             
-            for i, l in enumerate(links[:20]):
+            for i, l in enumerate(links[:15]):
                 print(f"Mẫu {i+1}: href='{l['href']}' | text='{l['text'].strip()}'")
             
             for l in links:
