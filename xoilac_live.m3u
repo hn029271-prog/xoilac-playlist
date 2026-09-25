@@ -1,6 +1,4 @@
 #EXTM3U
-#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 15:00 | 25-09 TRỰC TIẾP FF ASEAN CUP BANGLADESH 0 : 0 MALAYSIA KHÔ CHÈ
-https://livecdn.cdnfastter.xyz/live/livehub5/index.m3u8
 #EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 17:00 | 25-09 SẮP DIỄN RA GIAO HỮU QT ÚC VS BRAZIL GÀ RỪNG
 https://livecdn.cdnfastter.xyz/live/livehub4/index.m3u8
 #EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 17:00 | 25-09 SẮP DIỄN RA ASIAD U23 HÀN QUỐC VS U23 VIỆT NAM KHÔ CAY
@@ -9,9 +7,9 @@ https://livecdn.cdnfastter.xyz/live/livehub9/index.m3u8
 https://livecdn.cdnfastter.xyz/live/livehub8/index.m3u8
 #EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 23:00 | 25-09 SẮP DIỄN RA UEFA NATIONS LEAGUE GEORGIA VS NORTHERN IRELAND TÁO DAI KHÔ CHÈ
 https://livecdn.cdnfastter.xyz/live/livehub1/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 01:45 | 26-09 SẮP DIỄN RA UEFA NATIONS LEAGUE HUNGARY VS UKRAINE TÁO DAI
+https://livecdn.cdnfastter.xyz/live/livehub1/index.m3u8
 #EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 01:45 | 26-09 SẮP DIỄN RA UEFA NATIONS LEAGUE BA LAN VS BOSNIA & HERZEGOVINA XÔI XOÀI
 https://livecdn.cdnfastter.xyz/live/livehub3/index.m3u8
-#EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 01:45 | 26-09 SẮP DIỄN RA UEFA NATIONS LEAGUE THỤY ĐIỂN VS ROMANIA KHÔ CHÈ
-https://livecdn.cdnfastter.xyz/live/livehub5/index.m3u8
 #EXTINF:-1 group-title="Bóng Đá Trực Tiếp", [LIVE] 01:45 | 26-09 SẮP DIỄN RA UEFA NATIONS LEAGUE ITALY VS BỈ KHÔ CAY
 https://livecdn.cdnfastter.xyz/live/livehub9/index.m3u8
