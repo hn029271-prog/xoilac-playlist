@@ -29,7 +29,6 @@ def main():
                 has_touch=False
             )
             
-            # Thêm extra HTTP headers để giả lập trình duyệt thật 100%
             context.set_extra_http_headers({
                 "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7",
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -40,21 +39,33 @@ def main():
             print("Đang truy cập trang chủ xoiche.live qua lớp giả lập...")
             
             try:
-                page.goto(URL, timeout=45000, wait_until="domcontentloaded")
-            except Exception as e:
-                print(f"Thử tải lại lần 2 do mạng chậm: {e}")
                 page.goto(URL, timeout=45000, wait_until="commit")
+            except Exception as e:
+                print(f"Cảnh báo kết nối: {e}")
             
-            # Chờ thêm thời gian để Cloudflare xác thực ẩn và JS render trận đấu
-            print("Đang chờ nội dung trận đấu hiển thị...")
+            print("Đang chờ nội dung trang ổn định...")
             page.wait_for_timeout(8000)
             
-            # Cuộn trang từ từ để kích hoạt tải dữ liệu động (Lazy load)
+            # Cuộn trang an toàn
             for i in range(3):
-                page.evaluate(f"window.scrollTo(0, {(i+1) * 600});")
-                page.wait_for_timeout(2000)
+                try:
+                    page.evaluate(f"window.scrollTo(0, {(i+1) * 600});")
+                    page.wait_for_timeout(2000)
+                except Exception:
+                    pass
             
-            links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
+            # Quét link có cơ chế chống lỗi context destroyed
+            links = []
+            try:
+                links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
+            except Exception as e:
+                print(f"Trang đang chuyển hướng, thử quét lại sau 3 giây: {e}")
+                page.wait_for_timeout(3000)
+                try:
+                    links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
+                except Exception:
+                    links = []
+
             print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
             
             for l in links:
@@ -62,7 +73,6 @@ def main():
                 text = l['text'].strip()
                 if href and href != URL and 'xoiche.live' in href:
                     lower_href = href.lower()
-                    # Lọc bỏ các trang rác, hệ thống
                     if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me', 'login', 'register', 'highlight']):
                         match_title = text if len(text) > 3 else href.split('/')[-1].replace('-', ' ').upper()
                         if href not in match_dict:
