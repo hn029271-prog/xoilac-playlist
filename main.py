@@ -8,7 +8,6 @@ def main():
     match_dict = {}
     playlist = ["#EXTM3U\n"]
     
-    # Thiết lập múi giờ Việt Nam (UTC+7) để bộ đếm giờ hoạt động chuẩn xác
     vn_tz = timezone(timedelta(hours=7))
     now = datetime.now(vn_tz)
     
@@ -27,17 +26,13 @@ def main():
                 ]
             )
             context = browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                 viewport={"width": 1920, "height": 1080},
-                locale="vi-VN",
-                timezone_id="Asia/Ho_Chi_Minh",
-                device_scale_factor=1
+                locale="vi-VN"
             )
             
             context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
-            
             page = context.new_page()
-            print("Đang truy cập trang chủ xoiche.live...")
             
             try:
                 page.goto(URL, timeout=35000, wait_until="domcontentloaded")
@@ -49,10 +44,6 @@ def main():
             try:
                 page.mouse.click(500, 500)
                 page.wait_for_timeout(2000)
-            except Exception:
-                pass
-            
-            try:
                 page.evaluate("window.scrollBy(0, 800);")
                 page.wait_for_timeout(3000)
             except Exception:
@@ -64,76 +55,87 @@ def main():
             except Exception:
                 pass
                 
-            print(f"DEBUG - Tổng số link tìm thấy: {len(links)}")
-            
             for l in links:
                 href = l['href']
-                raw_text = l['text'].strip().upper()
+                raw_text = l['text'].strip().upper().replace('\n', ' ')
                 
                 if href and href != URL and 'xoiche.live' in href:
                     lower_href = href.lower()
-                    if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 't.me', 'login', 'register', 'highlight']):
+                    if not any(x in lower_href for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'sitemap', 'telegram', 'login', 'register']):
                         
-                        # ==========================================
-                        # 1. BỘ LỌC THỜI GIAN: LOẠI BỎ TRẬN CHƯA ĐÁ
-                        # ==========================================
-                        time_match = re.search(r'(\d{1,2}):(\d{2})', raw_text)
-                        date_match = re.search(r'(\d{1,2})[-/](\d{1,2})', raw_text)
-                        
-                        is_live = False
-                        if time_match and date_match:
-                            match_hour = int(time_match.group(1))
-                            match_minute = int(time_match.group(2))
-                            match_day = int(date_match.group(1))
-                            match_month = int(date_match.group(2))
+                        # 1. TÌM VÀ ĐỊNH DẠNG SỐ PHÚT
+                        minute = ""
+                        min_match = re.search(r"(\d{1,3}\s*')", raw_text)
+                        if min_match:
+                            minute = min_match.group(1).replace(' ', '')
+                        elif "HT" in raw_text or "NGHỈ GIỮA HIỆP" in raw_text:
+                            minute = "HT"
+                        elif "FT" in raw_text or "HẾT GIỜ" in raw_text:
+                            minute = "FT"
                             
-                            try:
-                                match_time = datetime(now.year, match_month, match_day, match_hour, match_minute, tzinfo=vn_tz)
-                                
-                                # Tính toán chênh lệch thời gian so với hiện tại (phút)
-                                time_diff = (now - match_time).total_seconds() / 60
-                                
-                                # CHỈ LẤY: Các trận bắt đầu trước đây tối đa 180 phút, hoặc sẽ đá trong 15 phút tới
-                                if -15 <= time_diff <= 180:
-                                    is_live = True
-                            except Exception:
-                                is_live = True 
+                        # Nếu không có dấu hiệu đang diễn ra thì bỏ qua
+                        if not minute and not re.search(r'\d+\s*-\s*\d+', raw_text) and " VS " not in raw_text:
+                            time_match = re.search(r'(\d{1,2}):(\d{2})', raw_text)
+                            if time_match:
+                                continue # Bỏ qua các trận tương lai chỉ có giờ
+                            
+                        # Danh sách từ rác cần dọn dẹp
+                        trash_words = [
+                            r'\[LIVE\]', r'LIVE', r'TRỰC TIẾP', r'BÓNG ĐÁ', r'NGHỈ GIỮA HIỆP', r'HT', r'FT', r'HẾT GIỜ',
+                            r'UEFA EUROPA LEAGUE', r'UEFA CHAMPIONS LEAGUE', r'CHAMPIONS LEAGUE', r'EUROPA LEAGUE',
+                            r'PREMIER LEAGUE', r'NGOẠI HẠNG ANH', r'LA LIGA', r'SERIE A', r'LIGUE 1', r'BUNDESLIGA',
+                            r'VÒNG LOẠI', r'GIAO HỮU', r'CÚP QUỐC GIA', r'CÚP C1', r'CÚP C2', r'CÚP C3'
+                        ]
+                        
+                        # 2. TÌM TỈ SỐ VÀ CHIA ĐỘI (Đội A Tỉ số : Tỉ số Đội B)
+                        score_match = re.search(r'(\d+)\s*-\s*(\d+)', raw_text)
+                        if score_match:
+                            score_a = score_match.group(1)
+                            score_b = score_match.group(2)
+                            
+                            # Cắt đôi chuỗi dựa vào tỉ số
+                            parts = re.split(r'\d+\s*-\s*\d+', raw_text, maxsplit=1)
+                            
+                            # Xử lý phần Đội A (trước tỉ số)
+                            a_clean = parts[0]
+                            a_clean = re.sub(r'\d{1,2}:\d{2}', '', a_clean)
+                            a_clean = re.sub(r'\d{1,2}[-/]\d{1,2}([-/]\d{2,4})?', '', a_clean)
+                            for word in trash_words:
+                                a_clean = re.sub(word, '', a_clean, flags=re.IGNORECASE)
+                            if ':' in a_clean:
+                                a_clean = a_clean.split(':')[-1]
+                            a_clean = re.sub(r'[-|\[\]]', '', a_clean)
+                            a_clean = re.sub(r'\s+', ' ', a_clean).strip()
+                            
+                            # Xử lý phần Đội B (sau tỉ số)
+                            b_clean = parts[1]
+                            b_clean = re.sub(r"\d{1,3}'", '', b_clean)
+                            b_clean = re.sub(r'BLV\s+.*', '', b_clean, flags=re.IGNORECASE)
+                            for word in trash_words:
+                                b_clean = re.sub(word, '', b_clean, flags=re.IGNORECASE)
+                            b_clean = re.sub(r'[-|\[\]]', '', b_clean)
+                            b_clean = re.sub(r'\s+', ' ', b_clean).strip()
+                            
+                            clean_name = f"{a_clean} {score_a} : {score_b} {b_clean}"
+                            if minute:
+                                clean_name += f" | {minute}"
                         else:
-                            # Không có thời gian hiển thị thì tìm dấu hiệu trận đang đá (số phút, tỉ số...)
-                            if re.search(r'\d+\s*-\s*\d+', raw_text) or re.search(r"\d+'", raw_text) or "ĐANG ĐÁ" in raw_text or "HT" in raw_text or " VS " in raw_text:
-                                is_live = True
+                            # Không tìm thấy tỉ số (VD: chưa ghi bàn)
+                            clean_name = raw_text
+                            clean_name = re.sub(r'\d{1,2}:\d{2}', '', clean_name)
+                            clean_name = re.sub(r'\d{1,2}[-/]\d{1,2}([-/]\d{2,4})?', '', clean_name)
+                            clean_name = re.sub(r"\d{1,3}'", '', clean_name)
+                            clean_name = re.sub(r'BLV\s+.*', '', clean_name, flags=re.IGNORECASE)
+                            for word in trash_words:
+                                clean_name = re.sub(word, '', clean_name, flags=re.IGNORECASE)
+                            clean_name = re.sub(r'[-|\[\]]', '', clean_name)
+                            clean_name = re.sub(r'\s+', ' ', clean_name).strip()
+                            
+                            if minute:
+                                clean_name += f" | {minute}"
                                 
-                        # Bỏ qua luôn trận này nếu phát hiện là trận tương lai
-                        if not is_live:
-                            continue
-                            
-                        # ==========================================
-                        # 2. LÀM SẠCH TÊN TRẬN (Chỉ giữ Đội A vs Đội B)
-                        # ==========================================
-                        clean_name = raw_text
-                        
-                        # Xóa cụm giờ (VD: 23:00) và ngày (VD: 25-09)
-                        clean_name = re.sub(r'\d{1,2}:\d{2}', '', clean_name)
-                        clean_name = re.sub(r'\d{1,2}[-/]\d{1,2}([-/]\d{2,4})?', '', clean_name)
-                        # Xóa cụm phút thi đấu (VD: 26')
-                        clean_name = re.sub(r"\d+'", '', clean_name)
-                        
-                        # Xóa các từ thừa thải
-                        for w in ['[LIVE]', 'LIVE', 'TRỰC TIẾP', 'BÓNG ĐÁ', 'XEM LẠI', 'SẮP DIỄN RA', 'HÔM NAY', 'GIẢI', 'VÒNG', 'BẢNG']:
-                            clean_name = clean_name.replace(w, '')
-                            
-                        # Dọn dẹp ký tự rác (dấu gạch, khoảng trắng kép)
-                        clean_name = re.sub(r'[\|\[\]]', '', clean_name)
-                        clean_name = re.sub(r'^\s*[-:]*\s*', '', clean_name)
-                        clean_name = re.sub(r'\s+', ' ', clean_name).strip()
-                        
-                        if not clean_name:
-                            clean_name = href.split('/')[-1].replace('-', ' ').upper()
-                        
-                        if href not in match_dict:
+                        if clean_name.replace(' | HT', '').replace(' | FT', '').strip() and href not in match_dict:
                             match_dict[href] = clean_name
-            
-            print(f"Lọc được tổng cộng {len(match_dict)} trận đấu ĐANG DIỄN RA.")
             
             count = 0
             for match_url, title in match_dict.items():
@@ -172,16 +174,13 @@ def main():
                 
                 if stream_url:
                     stream_url = stream_url.encode().decode('unicode-escape') if '\\u' in stream_url else stream_url
-                    
-                    # Định dạng lại tên gọn gàng cho app M3U
                     playlist.append(f'#EXTINF:-1 group-title="Bóng Đá", {title}\n')
                     playlist.append(f'{stream_url}\n')
                     count += 1
-                    print(f"-> Đã lấy thành công trận: {title}")
                     
             browser.close()
-    except Exception as e:
-        print(f"Lỗi tổng quan: {e}")
+    except Exception:
+        pass
 
     if len(playlist) <= 1:
         playlist.append('#EXTINF:-1 group-title="Bóng Đá", Hiện chưa có trận đấu nào đang diễn ra\n')
@@ -189,7 +188,6 @@ def main():
 
     with open("xoilac_live.m3u", "w", encoding="utf-8") as f:
         f.writelines(playlist)
-    print("Đã cập nhật danh sách M3U thành công!")
 
 if __name__ == "__main__":
     main()
