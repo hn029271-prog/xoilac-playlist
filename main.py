@@ -22,17 +22,19 @@ def main():
             print("Đang truy cập trang chủ xoiche.live...")
             
             try:
-                page.goto(URL, timeout=20000, wait_until="domcontentloaded")
+                page.goto(URL, timeout=30000, wait_until="domcontentloaded")
             except Exception:
                 pass
             
-            page.wait_for_timeout(4000)
+            # Đợi đủ 9 giây để JavaScript của trang kịp render danh sách trận đấu ra HTML
+            print("Đang chờ trang hiển thị đầy đủ danh sách trận đấu...")
+            page.wait_for_timeout(9000)
             
-            # Cuộn trang an toàn bằng window.scrollBy để tránh lỗi null body
+            # Cuộn trang an toàn xuống dưới để ép trang tải các trận phía dưới
             for _ in range(3):
                 try:
-                    page.evaluate("window.scrollBy(0, 800);")
-                    page.wait_for_timeout(1500)
+                    page.evaluate("window.scrollBy(0, 1000);")
+                    page.wait_for_timeout(2000)
                 except Exception:
                     pass
             
@@ -53,7 +55,7 @@ def main():
             
             count = 0
             for match_url, title in match_dict.items():
-                if count >= 10: # Lấy tối đa 10 trận để chạy mượt mà
+                if count >= 15: # Lấy tối đa 15 trận
                     break
                 
                 stream_url = None
@@ -67,8 +69,8 @@ def main():
                 match_page.on("request", on_request)
                 
                 try:
-                    match_page.goto(match_url, timeout=8000, wait_until="domcontentloaded")
-                    match_page.wait_for_timeout(2500)
+                    match_page.goto(match_url, timeout=10000, wait_until="domcontentloaded")
+                    match_page.wait_for_timeout(3000)
                 except Exception:
                     pass
                 
