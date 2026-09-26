@@ -1,3 +1,5 @@
 #EXTM3U
-#EXTINF:-1 group-title="Bóng Đá", Hiện chưa có trận đấu nào đang diễn ra
-https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 group-title="Bóng Đá", FF ASEAN CUP PAKISTAN 0-0 THAILAND KHÔ CAY | 8'
+https://livecdn.cdnfastter.xyz/live/livehub9/index.m3u8
+#EXTINF:-1 group-title="Bóng Đá", FF ASEAN CUP PAKISTAN 0-0 THAILAND CHIM NHỎ | 8'
+https://livecdn.cdnfastter.xyz/live/livehub9/index.m3u8
