@@ -3,30 +3,41 @@ name: Update Xoilac M3U
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/1 * * * *'
+    - cron: '*/30 * * * *'
 
 jobs:
-  update:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install dependencies & Playwright browsers
+      - name: Install Dependencies
         run: |
-          pip install requests beautifulsoup4 playwright
-          playwright install --with-deps chromium
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4
 
-      - name: Run script
+      - name: Pull Latest Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull origin main --rebase || true
+
+      - name: Run Scraper Script
         run: python main.py
 
-      - name: Commit and push if changed
+      - name: Auto Commit and Push
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Auto-update M3U with live tokens [skip ci]"
-          file_patterns: xoilac_live.m3u
+          file_pattern: "xoilac_live.m3u"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
