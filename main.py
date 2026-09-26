@@ -1,182 +1,75 @@
+import os
 import re
-from playwright.sync_api import sync_playwright
+import requests
+from bs4 import BeautifulSoup
 
-URL = "https://xoiche.live/"
+# Cập nhật tên miền mới
+DOMAIN = "https://xoiche1.live"
+M3U_FILE = "xoilac_live.m3u"
 
-def process_match_title(raw_text):
-    text = raw_text.upper().replace('\n', ' ')
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Referer": f"{DOMAIN}/",
+    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
+}
 
-    # 1. Bỏ ngay các trận chưa đá / lịch tương lai
-    if any(w in text for w in ["SẮP DIỄN RA", "HÔM NAY", "LỊCH THI ĐẤU"]):
-        return None
-
-    # 2. Lấy số phút thi đấu trước (VD: 86', 45+2', HT, FT)
-    minute = ""
-    min_match = re.search(r"(\d{1,3}(?:\+\d+)?\s*')", text)
-    if min_match:
-        minute = min_match.group(1).replace(' ', '')
-        text = text.replace(min_match.group(0), ' ')
-    elif "HT" in text or "NGHỈ GIỮA HIỆP" in text:
-        minute = "HT"
-    elif "FT" in text or "HẾT GIỜ" in text:
-        minute = "FT"
-    elif "ĐANG ĐÁ" in text or "LIVE" in text:
-        minute = "LIVE"
-
-    # 3. TRIỆT TÁC: Xóa Ngày/Tháng (25-09, 25/09) & Giờ (23:00) TRƯỚC KHI TÌM TỈ SỐ!
-    text = re.sub(r'\b\d{1,2}[-/.]\d{1,2}([-/.]\d{2,4})?\b', ' ', text)
-    text = re.sub(r'\b\d{1,2}:\d{2}\b', ' ', text)
-
-    # 4. Tìm tỉ số thực sự của trận đấu (VD: 2-1, 1-0, 0-0)
-    score_match = re.search(r'(\d+)\s*[-:]\s*(\d+)', text)
-
-    # Không có cả Tỉ số LẪN Phút = Trận chưa đá -> Bỏ luôn
-    if not score_match and not minute:
-        return None
-
-    # 5. Danh sách từ rác cần dọn dẹp (Giải đấu, BLV, Trực tiếp...)
-    trash_patterns = [
-        r'\[LIVE\]', r'\bLIVE\b', r'TRỰC TIẾP', r'BÓNG ĐÁ', r'ĐANG ĐÁ', r'NGHỈ GIỮA HIỆP',
-        r'\bHT\b', r'\bFT\b', r'HẾT GIỜ', r'SẮP DIỄN RA', r'HÔM NAY', r'VS',
-        r'UEFA NATIONS LEAGUE', r'NATIONS LEAGUE', r'CHAMPIONS LEAGUE', r'EUROPA LEAGUE',
-        r'PREMIER LEAGUE', r'NGOẠI HẠNG ANH', r'LA LIGA', r'SERIE A', r'LIGUE 1', r'BUNDESLIGA',
-        r'VÒNG LOẠI', r'GIAO HỮU', r'CÚP QUỐC GIA', r'CÚP C1', r'CÚP C2', r'CÚP C3', r'VÒNG\s+\d+'
-    ]
-
-    if score_match:
-        parts = re.split(r'\d+\s*[-:]\s*\d+', text, maxsplit=1)
-        team_a_raw = parts[0]
-        team_b_raw = parts[1]
-        score_a = score_match.group(1)
-        score_b = score_match.group(2)
-
-        def clean_sub(s):
-            s = re.sub(r'BLV\s+.*', ' ', s, flags=re.IGNORECASE)
-            for tp in trash_patterns:
-                s = re.sub(tp, ' ', s, flags=re.IGNORECASE)
-            s = re.sub(r'[\|\[\]\(\)\-\:\']', ' ', s)
-            s = re.sub(r'\s+', ' ', s).strip()
-            return s
-
-        team_a = clean_sub(team_a_raw)
-        team_b = clean_sub(team_b_raw)
-
-        if not team_a or not team_b:
-            return None
-
-        title = f"{team_a} {score_a}-{score_b} {team_b}"
-    else:
-        def clean_all(s):
-            s = re.sub(r'BLV\s+.*', ' ', s, flags=re.IGNORECASE)
-            for tp in trash_patterns:
-                s = re.sub(tp, ' ', s, flags=re.IGNORECASE)
-            s = re.sub(r'[\|\[\]\(\)\-\:\']', ' ', s)
-            s = re.sub(r'\s+', ' ', s).strip()
-            return s
-        title = clean_all(text)
-
-    # Gắn thêm phút trực tiếp nếu có
-    if minute:
-        title += f" | {minute}"
-
-    return title
-
-def main():
-    match_dict = {}
-    playlist = ["#EXTM3U\n"]
-    
+def fetch_xoilac_matches():
+    matches = []
     try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(
-                headless=True,
-                args=[
-                    "--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage",
-                    "--disable-accelerated-2d-canvas", "--disable-gpu"
-                ]
-            )
-            context = browser.new_context(viewport={"width": 1920, "height": 1080})
-            page = context.new_page()
-            
-            try:
-                page.goto(URL, timeout=35000, wait_until="domcontentloaded")
-            except Exception:
-                pass
-            page.wait_for_timeout(8000)
-            
-            try:
-                page.mouse.click(500, 500)
-                page.wait_for_timeout(2000)
-                page.evaluate("window.scrollBy(0, 800);")
-                page.wait_for_timeout(3000)
-            except Exception:
-                pass
-            
-            links = []
-            try:
-                links = page.locator("a").evaluate_all("elements => elements.map(e => ({href: e.href, text: e.innerText}))")
-            except Exception:
-                pass
-                
-            for l in links:
-                href = l['href']
-                raw_text = l['text'].strip()
-                
-                if href and href != URL and 'xoiche.live' in href:
-                    if any(x in href.lower() for x in ['tin-tuc', 'kien-thuc', 'lien-he', 'telegram', 'login', 'register']):
-                        continue
-                        
-                    clean_title = process_match_title(raw_text)
-                    if clean_title and href not in match_dict:
-                        match_dict[href] = clean_title
-            
-            count = 0
-            for match_url, title in match_dict.items():
-                if count >= 15:
-                    break
-                
-                stream_url = None
-                match_page = context.new_page()
-                
-                def on_request(request):
-                    nonlocal stream_url
-                    if not stream_url and any(kw in request.url.lower() for kw in ['.m3u8']):
-                        stream_url = request.url
+        res = requests.get(DOMAIN, headers=HEADERS, timeout=12)
+        res.encoding = 'utf-8'
+        if res.status_code != 200:
+            print(f"Lỗi truy cập {DOMAIN}: HTTP {res.status_code}")
+            return matches
 
-                match_page.on("request", on_request)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        
+        # Thẻ chứa danh sách trận đấu trên hệ thống Xoilac/Xoiche mới
+        items = soup.select('a[href*="/truc-tiep/"], a[href*="/match/"], a[href*="/room/"]')
+        
+        seen_urls = set()
+        for item in items:
+            href = item.get('href', '')
+            if not href:
+                continue
                 
-                try:
-                    match_page.goto(match_url, timeout=15000, wait_until="domcontentloaded")
-                    match_page.wait_for_timeout(4000)
-                    
-                    try:
-                        match_page.mouse.click(600, 400)
-                        match_page.wait_for_timeout(3000)
-                    except Exception:
-                        pass
-                    
-                    if not stream_url:
-                        video_src = match_page.evaluate("() => { const v = document.querySelector('video'); return v ? v.src : null; }")
-                        if video_src and 'http' in video_src:
-                            stream_url = video_src
-                except Exception:
-                    pass
-                match_page.close()
+            full_url = href if href.startswith("http") else f"{DOMAIN}{href}"
+            if full_url in seen_urls:
+                continue
+            seen_urls.add(full_url)
+            
+            # Lấy tiêu đề trận đấu, tỉ số, số phút & BLV
+            raw_text = item.get_text(separator=" ", strip=True)
+            clean_title = re.sub(r'\s+', ' ', raw_text)
+            
+            # Chỉ lấy các mục có nội dung trận đấu thực sự (loại bỏ bài viết, tin tức)
+            if len(clean_title) > 5 and not any(x in clean_title.lower() for x in ["highlight", "tin tức", "lịch thi đấu", "bảng xếp hạng"]):
+                # Tự động gán nhãn [LIVE] cho các trận cào được
+                if "[LIVE]" not in clean_title.upper():
+                    clean_title = f"[LIVE] {clean_title}"
+                matches.append((clean_title, full_url))
                 
-                if stream_url:
-                    playlist.append(f'#EXTINF:-1 group-title="Bóng Đá", {title}\n')
-                    playlist.append(f'{stream_url}\n')
-                    count += 1
-                    
-            browser.close()
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Lỗi trong quá trình quét dữ liệu: {e}")
+        
+    return matches
 
-    if len(playlist) <= 1:
-        playlist.append('#EXTINF:-1 group-title="Bóng Đá", Hiện chưa có trận đấu nào đang diễn ra\n')
-        playlist.append('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8\n')
+def save_to_m3u(matches):
+    with open(M3U_FILE, "w", encoding="utf-8") as f:
+        f.write("#EXTM3U\n")
+        if not matches:
+            f.write('#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện chưa có trận đấu nào\n')
+            f.write("https://example.com/live.m3u8\n")
+            print("Không tìm thấy trận đấu nào, đã tạo file m3u rỗng tạm thời.")
+            return
 
-    with open("xoilac_live.m3u", "w", encoding="utf-8") as f:
-        f.writelines(playlist)
+        for idx, (title, url) in enumerate(matches, 1):
+            f.write(f'#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", {title}\n')
+            f.write(f'{url}\n')
+            
+    print(f"Đã xuất thành công {len(matches)} trận đấu vào {M3U_FILE}")
 
 if __name__ == "__main__":
-    main()
+    print(f"Bắt đầu quét dữ liệu bóng đá từ {DOMAIN}...")
+    live_matches = fetch_xoilac_matches()
+    save_to_m3u(live_matches)
