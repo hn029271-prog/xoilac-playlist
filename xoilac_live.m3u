@@ -1,37 +1,115 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 19:30|26-0915'FF ASEAN CUPViệt Nam0 : 0PhilippinesKhô Chè
-https://xoiche1.live/truc-tiep/viet-nam-vs-philippines-26-09-2026?blv=xanh-che
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 19:30|26-0915'FF ASEAN CUPViệt Nam0 : 0PhilippinesLee Sin
-https://xoiche1.live/truc-tiep/viet-nam-vs-philippines-26-09-2026?blv=lee-sin
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 19:30|26-0915'FF ASEAN CUPViệt Nam0 : 0PhilippinesTày
-https://xoiche1.live/truc-tiep/viet-nam-vs-philippines-26-09-2026?blv=tay
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 20:00|26-09Trực tiếpUEFA Nations LeagueSlovenia0 : 0ScotlandPháo Thủ
-https://xoiche1.live/truc-tiep/slovenia-vs-scotland-26-09-2026?blv=phao-thu
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 20:00|26-09Trực tiếpUEFA Nations LeagueSlovenia0 : 0ScotlandGà Rừng
-https://xoiche1.live/truc-tiep/slovenia-vs-scotland-26-09-2026?blv=ga-rung
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 21:15|26-09Sắp diễn raSPA D2Granada CFVSAndorraXôi Xoài
-https://xoiche1.live/truc-tiep/granada-cf-vs-andorra-26-09-2026?blv=xoi-xoai
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 22:55|26-09Sắp diễn raCup Vùng VịnhKuwaitVSIraqKền Kền
-https://xoiche1.live/truc-tiep/kuwait-vs-iraq-26-09-2026-857453?blv=ken-ken
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 23:00|26-09Sắp diễn raUEFA Nations LeagueBulgariaVSLuxembourgTiểu Mây
-https://xoiche1.live/truc-tiep/bulgaria-vs-luxembourg-26-09-2026-790922?blv=tieu-may
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 23:00|26-09Sắp diễn raUEFA Nations LeagueIcelandVSEstoniaPháo Thủ
-https://xoiche1.live/truc-tiep/iceland-vs-estonia-26-09-2026?blv=phao-thu
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 23:00|26-09Sắp diễn raUEFA Nations LeagueIcelandVSEstoniaTam Mao
-https://xoiche1.live/truc-tiep/iceland-vs-estonia-26-09-2026?blv=tam-mao
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 23:00|26-09Sắp diễn raUEFA Nations LeagueSan MarinoVSFinlandEnzo
-https://xoiche1.live/truc-tiep/san-marino-vs-finland-26-09-2026-790925?blv=enzo
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:00|27-09Sắp diễn raCup Vùng VịnhOmanVSẢ Rập Xê ÚtXôi Xoài
-https://xoiche1.live/truc-tiep/oman-vs-a-rap-xe-ut-27-09-2026?blv=xoi-xoai
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:00|27-09Sắp diễn raCup Vùng VịnhOmanVSẢ Rập Xê ÚtTày
-https://xoiche1.live/truc-tiep/oman-vs-a-rap-xe-ut-27-09-2026?blv=tay
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueCộng Hòa SécVSCroatiaKhô Chè
-https://xoiche1.live/truc-tiep/cong-hoa-sec-vs-croatia-27-09-2026?blv=xanh-che
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueCộng Hòa SécVSCroatiaPháo Thủ
-https://xoiche1.live/truc-tiep/cong-hoa-sec-vs-croatia-27-09-2026?blv=phao-thu
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueAnhVSTây Ban NhaXôi Gà
-https://xoiche1.live/truc-tiep/anh-vs-tay-ban-nha-27-09-2026?blv=xoi-ga
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueAnhVSTây Ban NhaTam Mao
-https://xoiche1.live/truc-tiep/anh-vs-tay-ban-nha-27-09-2026?blv=tam-mao
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueAnhVSTây Ban NhaLee Sin
-https://xoiche1.live/truc-tiep/anh-vs-tay-ban-nha-27-09-2026?blv=lee-sin
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 20:00 Slovenia Scotland
+https://xoilac.live/truc-tiep/slovenia-vs-scotland-luc-2000-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 20:00 Việt Nam Philippines
+https://xoilac.live/truc-tiep/viet-nam-vs-philippines-luc-1930-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 23:00 Iceland Estonia
+https://xoilac.live/truc-tiep/iceland-vs-estonia-luc-2300-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 23:00 Faroe Islands Kazakhstan
+https://xoilac.live/truc-tiep/faroe-islands-vs-kazakhstan-luc-2300-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 23:00 San Marino Phần Lan
+https://xoilac.live/truc-tiep/san-marino-vs-phan-lan-luc-2300-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 23:00 Bulgaria Luxembourg
+https://xoilac.live/truc-tiep/bulgaria-vs-luxembourg-luc-2300-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Ballymena United FC Portadown
+https://xoilac.live/truc-tiep/ballymena-united-fc-vs-portadown-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Limavady United Cliftonville
+https://xoilac.live/truc-tiep/limavady-united-vs-cliftonville-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Nữ FK Minsk Nữ Fenerbahce SK
+https://xoilac.live/truc-tiep/nu-fk-minsk-vs-nu-fenerbahce-sk-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 CA Progreso RC Montevideo
+https://xoilac.live/truc-tiep/ca-progreso-vs-rc-montevideo-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:15 Granada Andorra CF
+https://xoilac.live/truc-tiep/granada-vs-andorra-cf-luc-2115-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:30 Nữ Logrono Nữ Barcelona
+https://xoilac.live/truc-tiep/nu-logrono-vs-nu-barcelona-luc-2130-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 22:00 Georgia U21 Hy Lạp U21
+https://xoilac.live/truc-tiep/georgia-u21-vs-hy-lap-u21-luc-2200-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 22:00 Croatia U21 Hungary U21
+https://xoilac.live/truc-tiep/croatia-u21-vs-hungary-u21-luc-2200-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 22:30 Pogon Szczecin Udinese
+https://xoilac.live/truc-tiep/pogon-szczecin-vs-udinese-luc-2230-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 22:55 Kuwait Iraq
+https://xoilac.live/truc-tiep/kuwait-vs-iraq-luc-2255-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 23:00 Latvia U21 Đức U21
+https://xoilac.live/truc-tiep/latvia-u21-vs-duc-u21-luc-2300-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 23:00 Ukraine U21 Thổ Nhĩ Kỳ U21
+https://xoilac.live/truc-tiep/ukraine-u21-vs-tho-nhi-ky-u21-luc-2300-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 23:00 Nữ London Lionesses Nữ Brighton
+https://xoilac.live/truc-tiep/nu-london-lionesses-vs-nu-brighton-luc-2300-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 23:00 Nữ Italy U20 Nữ Colombia U20
+https://xoilac.live/truc-tiep/nu-italy-u20-vs-nu-colombia-u20-luc-2300-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 23:30 Tenerife Cadiz CF
+https://xoilac.live/truc-tiep/tenerife-vs-cadiz-cf-luc-2330-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Ngày mai, 00:00 Malta U21 Bắc Ireland U21
+https://xoilac.live/truc-tiep/malta-u21-vs-bac-ireland-u21-luc-0000-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Chayka-M Peschanokopskoye Kyzyltash Bakhchysarai
+https://xoilac.live/truc-tiep/chayka-m-peschanokopskoye-vs-kyzyltash-bakhchysarai-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Glentoran FC Carrick Rangers FC
+https://xoilac.live/truc-tiep/glentoran-fc-vs-carrick-rangers-fc-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Crusaders Bangor FC
+https://xoilac.live/truc-tiep/crusaders-vs-bangor-fc-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Borac Cacak Backa Topola
+https://xoilac.live/truc-tiep/borac-cacak-vs-backa-topola-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Yemen U17 Palestine U17
+https://xoilac.live/truc-tiep/yemen-u17-vs-palestine-u17-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Bohemians Bohemians Praha 1905
+https://xoilac.live/truc-tiep/bohemians-vs-bohemians-praha-1905-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:00 Nữ VfL Bochum Nữ Werder Bremen
+https://xoilac.live/truc-tiep/nu-vfl-bochum-vs-nu-werder-bremen-luc-2100-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hôm nay, 21:30 Heracles Almelo Vitesse Arnhem
+https://xoilac.live/truc-tiep/heracles-almelo-vs-vitesse-arnhem-luc-2130-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] NICK
+https://xoilac.live/truc-tiep/viet-nam-vs-philippines-luc-1930-ngay-26-09-2026/link/2
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] BRADY
+https://xoilac.live/truc-tiep/viet-nam-vs-philippines-luc-1930-ngay-26-09-2026/link/8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] FABIO
+https://xoilac.live/truc-tiep/slovenia-vs-scotland-luc-2000-ngay-26-09-2026/link/1
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] JOHAN
+https://xoilac.live/truc-tiep/ad-ceuta-vs-real-sociedad-b-luc-1900-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] SILVA
+https://xoilac.live/truc-tiep/hy-lap-u17-vs-gibraltar-u17-luc-1900-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] BEE
+https://xoilac.live/truc-tiep/iceland-u17-vs-bosnia-u17-luc-1900-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] NEMO
+https://xoilac.live/truc-tiep/nu-charlton-vs-nu-manchester-city-luc-1930-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] KEN
+https://xoilac.live/truc-tiep/nam-phi-vs-guinea-luc-2000-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] ZANE
+https://xoilac.live/truc-tiep/kenya-vs-eritrea-luc-2000-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] KOBE
+https://xoilac.live/truc-tiep/avtodor-saratov-vs-bc-samara-luc-2000-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] ALAN
+https://xoilac.live/truc-tiep/bayern-munchen-vs-alba-berlin-luc-2040-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] TOMMY
+https://xoilac.live/truc-tiep/unics-kazan-vs-parma-perm-luc-2200-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] KOBE
+https://xoilac.live/truc-tiep/barcelona-vs-basquet-coruna-luc-0200-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] ALAN
+https://xoilac.live/truc-tiep/lobos-de-puebla-vs-mineros-de-zacatecas-luc-0600-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] TOMMY
+https://xoilac.live/truc-tiep/abejas-de-leon-vs-santos-del-potosi-luc-0900-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] ALAN
+https://xoilac.live/truc-tiep/suwon-sonicboom-vs-goyang-sono-luc-1200-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] KOBE
+https://xoilac.live/truc-tiep/seoul-thunders-vs-anyang-jungkwanjang-luc-1200-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] TOMMY
+https://xoilac.live/truc-tiep/adelaide-36ers-vs-cairns-taipans-luc-1300-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] TYSON
+https://xoilac.live/truc-tiep/phan-lan-vs-slovenia-luc-2200-ngay-26-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] TYSON
+https://xoilac.live/truc-tiep/phap-vs-ba-lan-luc-0200-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] TYSON
+https://xoilac.live/truc-tiep/han-quoc-vs-philippines-luc-1100-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] TYSON
+https://xoilac.live/truc-tiep/an-do-vs-viet-nam-luc-1400-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] TYSON
+https://xoilac.live/truc-tiep/nhat-ban-vs-uzbekistan-luc-1720-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] MARTY
+https://xoilac.live/truc-tiep/solary-vs-movistar-koi-fenix-luc-1300-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] MARTY
+https://xoilac.live/truc-tiep/dplus-challengers-vs-dn-soopers-challengers-luc-1600-ngay-27-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] MARTY
+https://xoilac.live/truc-tiep/t1-esports-academy-vs-cupid-esports-luc-1300-ngay-28-09-2026/
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] MARTY
+https://xoilac.live/truc-tiep/kt-rolster-challengers-vs-galions-luc-1600-ngay-28-09-2026/
