@@ -1,3 +1,37 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện chưa có trận đấu nào
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 19:30|26-0915'FF ASEAN CUPViệt Nam0 : 0PhilippinesKhô Chè
+https://xoiche1.live/truc-tiep/viet-nam-vs-philippines-26-09-2026?blv=xanh-che
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 19:30|26-0915'FF ASEAN CUPViệt Nam0 : 0PhilippinesLee Sin
+https://xoiche1.live/truc-tiep/viet-nam-vs-philippines-26-09-2026?blv=lee-sin
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 19:30|26-0915'FF ASEAN CUPViệt Nam0 : 0PhilippinesTày
+https://xoiche1.live/truc-tiep/viet-nam-vs-philippines-26-09-2026?blv=tay
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 20:00|26-09Trực tiếpUEFA Nations LeagueSlovenia0 : 0ScotlandPháo Thủ
+https://xoiche1.live/truc-tiep/slovenia-vs-scotland-26-09-2026?blv=phao-thu
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 20:00|26-09Trực tiếpUEFA Nations LeagueSlovenia0 : 0ScotlandGà Rừng
+https://xoiche1.live/truc-tiep/slovenia-vs-scotland-26-09-2026?blv=ga-rung
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 21:15|26-09Sắp diễn raSPA D2Granada CFVSAndorraXôi Xoài
+https://xoiche1.live/truc-tiep/granada-cf-vs-andorra-26-09-2026?blv=xoi-xoai
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 22:55|26-09Sắp diễn raCup Vùng VịnhKuwaitVSIraqKền Kền
+https://xoiche1.live/truc-tiep/kuwait-vs-iraq-26-09-2026-857453?blv=ken-ken
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 23:00|26-09Sắp diễn raUEFA Nations LeagueBulgariaVSLuxembourgTiểu Mây
+https://xoiche1.live/truc-tiep/bulgaria-vs-luxembourg-26-09-2026-790922?blv=tieu-may
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 23:00|26-09Sắp diễn raUEFA Nations LeagueIcelandVSEstoniaPháo Thủ
+https://xoiche1.live/truc-tiep/iceland-vs-estonia-26-09-2026?blv=phao-thu
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 23:00|26-09Sắp diễn raUEFA Nations LeagueIcelandVSEstoniaTam Mao
+https://xoiche1.live/truc-tiep/iceland-vs-estonia-26-09-2026?blv=tam-mao
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 23:00|26-09Sắp diễn raUEFA Nations LeagueSan MarinoVSFinlandEnzo
+https://xoiche1.live/truc-tiep/san-marino-vs-finland-26-09-2026-790925?blv=enzo
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:00|27-09Sắp diễn raCup Vùng VịnhOmanVSẢ Rập Xê ÚtXôi Xoài
+https://xoiche1.live/truc-tiep/oman-vs-a-rap-xe-ut-27-09-2026?blv=xoi-xoai
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:00|27-09Sắp diễn raCup Vùng VịnhOmanVSẢ Rập Xê ÚtTày
+https://xoiche1.live/truc-tiep/oman-vs-a-rap-xe-ut-27-09-2026?blv=tay
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueCộng Hòa SécVSCroatiaKhô Chè
+https://xoiche1.live/truc-tiep/cong-hoa-sec-vs-croatia-27-09-2026?blv=xanh-che
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueCộng Hòa SécVSCroatiaPháo Thủ
+https://xoiche1.live/truc-tiep/cong-hoa-sec-vs-croatia-27-09-2026?blv=phao-thu
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueAnhVSTây Ban NhaXôi Gà
+https://xoiche1.live/truc-tiep/anh-vs-tay-ban-nha-27-09-2026?blv=xoi-ga
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueAnhVSTây Ban NhaTam Mao
+https://xoiche1.live/truc-tiep/anh-vs-tay-ban-nha-27-09-2026?blv=tam-mao
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] 01:45|27-09Sắp diễn raUEFA Nations LeagueAnhVSTây Ban NhaLee Sin
+https://xoiche1.live/truc-tiep/anh-vs-tay-ban-nha-27-09-2026?blv=lee-sin
