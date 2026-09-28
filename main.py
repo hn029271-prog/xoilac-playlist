@@ -17,7 +17,7 @@ BACKUP_DOMAINS = [
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
     "Referer": "https://xoiche.tv/",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept": "*/*",
     "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
 }
 
@@ -97,43 +97,67 @@ def parse_match_title(raw_text):
             
         return clean_title, True
 
-def extract_direct_m3u8_url(match_page_url):
+def extract_direct_m3u8_url(match_page_url, domain):
     """
-    Đi sâu vào trang chi tiết trận đấu, bóc tách lấy link stream dạng .m3u8
-    Bỏ qua giao diện HTML và các banner quảng cáo.
+    Truy xuất luồng phát m3u8 thông qua HTML, Regex JS, Embed Iframe và API Endpoint.
     """
     try:
         headers = HEADERS.copy()
-        headers["Referer"] = match_page_url
+        headers["Referer"] = domain + "/"
         res = requests.get(match_page_url, headers=headers, timeout=10)
         
         if res.status_code == 200:
             html = res.text
             
-            # 1. Tìm trực tiếp file .m3u8 trong mã nguồn JavaScript / Player Config
-            m3u8_matches = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', html)
+            # 1. Tìm trực tiếp file .m3u8 hoặc luồng hls trong HTML/JS
+            m3u8_matches = re.findall(r'(https?://[^\s"\']+\.(?:m3u8|flv)[^\s"\']*)', html)
             if m3u8_matches:
-                # Ưu tiên lấy link không chứa từ 'ad' hoặc 'promo' (để né quảng cáo)
                 clean_streams = [m for m in m3u8_matches if not any(x in m.lower() for x in ['ad', 'promo', 'banner'])]
                 if clean_streams:
                     return clean_streams[0]
-                return m3u8_matches[0]
 
-            # 2. Nếu nằm trong iframe embed player
+            # 2. Bóc tách ID trận đấu để gọi API lấy link stream trực tiếp
+            match_id = None
+            id_search = re.search(r'/(?:room|match|truc-tiep)/([a-zA-Z0-9\-_]+)', match_page_url)
+            if id_search:
+                match_id = id_search.group(1)
+                
+            if match_id:
+                # Các endpoint API stream phổ biến của hệ thống Xoilac
+                api_endpoints = [
+                    f"{domain}/api/v1/room/detail?id={match_id}",
+                    f"{domain}/api/match/{match_id}/stream",
+                    f"{domain}/json/{match_id}.json"
+                ]
+                for api in api_endpoints:
+                    try:
+                        api_res = requests.get(api, headers=headers, timeout=5)
+                        if api_res.status_code == 200 and 'm3u8' in api_res.text:
+                            found = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', api_res.text)
+                            if found:
+                                return found[0]
+                    except:
+                        pass
+
+            # 3. Quét các iframe player nhúng
             soup = BeautifulSoup(html, 'html.parser')
             iframes = soup.find_all('iframe', src=True)
             for iframe in iframes:
                 src = iframe['src']
-                if 'http' in src and any(k in src for k in ['embed', 'player', 'stream', 'live']):
-                    iframe_res = requests.get(src, headers=headers, timeout=8)
-                    if iframe_res.status_code == 200:
-                        inner_m3u8 = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', iframe_res.text)
-                        if inner_m3u8:
-                            return inner_m3u8[0]
+                if 'http' in src and any(k in src for k in ['embed', 'player', 'stream', 'live', 'play']):
+                    try:
+                        iframe_headers = headers.copy()
+                        iframe_headers["Referer"] = match_page_url
+                        iframe_res = requests.get(src, headers=iframe_headers, timeout=6)
+                        if iframe_res.status_code == 200:
+                            inner_m3u8 = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', iframe_res.text)
+                            if inner_m3u8:
+                                return inner_m3u8[0]
+                    except:
+                        pass
     except Exception as e:
-        print(f"Lỗi bóc m3u8 từ {match_page_url}: {e}")
+        print(f"Không lấy được link stream từ {match_page_url}: {e}")
         
-    # Nếu không trích xuất được file .m3u8 thô, giữ lại URL trang trận đấu
     return match_page_url
 
 def get_live_matches(domain):
@@ -169,8 +193,7 @@ def get_live_matches(domain):
                     seen_urls.add(full_url)
                     print(f"-> Phát hiện trận LIVE: {title}")
                     
-                    # Trích xuất đường dẫn .m3u8 phát trực tiếp
-                    m3u8_stream = extract_direct_m3u8_url(full_url)
+                    m3u8_stream = extract_direct_m3u8_url(full_url, domain)
                     matches.append((title, m3u8_stream))
                     
     except Exception as e:
@@ -199,7 +222,7 @@ def main():
             f.write('#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá\n')
             f.write("https://example.com/live.m3u8\n")
         else:
-            print(f"==> Bóc tách thành công {len(live_matches)} link stream trực tiếp.")
+            print(f"==> Hoàn tất! Đã cập nhật {len(live_matches)} trận đấu.")
             for title, stream_url in live_matches:
                 f.write(f'#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", {title}\n')
                 f.write(f'{stream_url}\n')
