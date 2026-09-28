@@ -1,167 +1,150 @@
 import os
 import re
 import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 
-BASE_TV_URL = "https://xoiche.tv"
 M3U_FILE = "xoilac_live.m3u"
 
-BACKUP_DOMAINS = [
-    "https://xoiche1.live",
-    "https://xoilac.live",
-    "https://xoilac.tv"
+# Các cổng API lấy thông tin stream của hệ thống Xoilac/Xoiche
+API_ENDPOINTS = [
+    "https://api.xoilac.live/api/room/list",
+    "https://api.xoiche.tv/api/v1/matches/live",
+    "https://xoiche1.live/api/v1/room/list"
 ]
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-    "Referer": "https://xoiche.tv/",
-    "Accept": "*/*",
-    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
+    "Origin": "https://xoiche1.live",
+    "Referer": "https://xoiche1.live/",
+    "Accept": "application/json, text/plain, */*"
 }
 
 def clean_text(text):
     if not text:
         return ""
-    text = re.sub(r'\s+', ' ', text)
-    return text.strip()
+    return re.sub(r'\s+', ' ', str(text)).strip()
 
-def format_match_title(raw_text):
+def extract_m3u8_from_page(match_url):
     """
-    Xóa phần ngày giờ '23:00 | 28-09'
-    Định dạng hiển thị: Tên Giải Đấu + Đội A Tỉ số Đội B | Phút'
-    """
-    text = clean_text(raw_text)
-    
-    # 1. Loại bỏ hoàn toàn định dạng giờ/ngày (VD: 23:00 | 28-09 hoặc 28-09-2026)
-    text = re.sub(r'\d{1,2}:\d{2}\s*\|\s*\d{1,2}-\d{1,2}(-\d{2,4})?', '', text)
-    text = re.sub(r'\d{1,2}:\d{2}', '', text)
-    text = clean_text(text)
-
-    # 2. Tìm phút thi đấu (VD: 73', 86', H1, H2, HT)
-    minute_match = re.search(r"(\d+['′]|Hiệp \d|H\d|HT)", text, re.IGNORECASE)
-    minute_str = ""
-    if minute_match:
-        minute_str = minute_match.group(1)
-        # Xóa phút ra khỏi chuỗi thô để dễ xử lý tên giải/đội
-        text = text.replace(minute_str, '').strip()
-
-    # Nếu không có phút hoặc không có từ khóa đang đá -> Bỏ qua trận chưa đá
-    if not minute_str and not any(k in text.lower() for k in ["live", "đang đá", "trực tiếp"]):
-        return None
-
-    if not minute_str:
-        minute_str = "LIVE"
-
-    # Xóa các từ thừa
-    text = re.sub(r'^(Trực tiếp|Live|Xem|TRỰC TIẾP)\s+', '', text, flags=re.IGNORECASE)
-    text = re.sub(r'\s+(blv|BLV).*$', '', text, flags=re.IGNORECASE) # Xóa tên BLV ở cuối
-
-    # Ghép lại định dạng chuẩn đẹp
-    formatted_title = f"{text} | {minute_str}"
-    return formatted_title
-
-def extract_direct_m3u8(match_url, domain):
-    """
-    Đi sâu vào trang trận đấu để lấy link .m3u8 chuẩn
+    Truy cập trang trận đấu, quét các thẻ script JSON-LD hoặc biến JavaScript
+    chứa đường dẫn .m3u8
     """
     try:
-        headers = HEADERS.copy()
-        headers["Referer"] = domain + "/"
-        res = requests.get(match_url, headers=headers, timeout=8)
-        
+        res = requests.get(match_url, headers=HEADERS, timeout=8)
         if res.status_code == 200:
             html = res.text
             
-            # 1. Tìm trực tiếp file .m3u8 trong HTML/JS
-            m3u8_links = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', html)
-            if m3u8_links:
-                # Lọc bỏ link quảng cáo
-                clean_links = [m for m in m3u8_links if not any(x in m.lower() for x in ['ad', 'promo', 'banner'])]
+            # Tìm link .m3u8 trong JavaScript
+            m3u8_matches = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', html)
+            if m3u8_matches:
+                # Lọc bỏ các đường dẫn quảng cáo (ad, promo)
+                clean_links = [m for m in m3u8_matches if not any(x in m.lower() for x in ['ad', 'promo', 'banner'])]
                 if clean_links:
                     return clean_links[0]
-
-            # 2. Bóc tách qua API ID của trận đấu
-            match_id_search = re.search(r'/(?:room|match|truc-tiep)/([a-zA-Z0-9\-_]+)', match_url)
-            if match_id_search:
-                match_id = match_id_search.group(1)
-                api_url = f"{domain}/api/v1/room/detail?id={match_id}"
-                try:
-                    api_res = requests.get(api_url, headers=headers, timeout=5)
-                    if api_res.status_code == 200:
-                        found = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', api_res.text)
-                        if found:
-                            return found[0]
-                except:
-                    pass
-
-            # 3. Quét Iframe Embed Player
-            soup = BeautifulSoup(html, 'html.parser')
-            for iframe in soup.find_all('iframe', src=True):
-                src = iframe['src']
-                if 'http' in src:
-                    iframe_res = requests.get(src, headers=headers, timeout=5)
-                    if iframe_res.status_code == 200:
-                        found = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', iframe_res.text)
-                        if found:
-                            return found[0]
+                return m3u8_matches[0]
+                
+            # Tìm đường dẫn hls/stream mã hóa trong player config
+            stream_matches = re.findall(r'["\'](https?://[^\s"\']+(?:hls|stream|live)[^\s"\']*)["\']', html)
+            if stream_matches:
+                return stream_matches[0]
     except Exception as e:
-        print(f"Lỗi extract m3u8 từ {match_url}: {e}")
-        
-    return match_url
-
-def get_live_matches(domain):
-    matches = []
-    seen_urls = set()
+        print(f"Lỗi khi cào m3u8 từ {match_url}: {e}")
     
-    print(f"Đang bóc tách danh sách từ: {domain}...")
-    try:
-        headers = HEADERS.copy()
-        headers["Referer"] = domain + "/"
-        
-        res = requests.get(domain, headers=headers, timeout=10)
-        res.encoding = 'utf-8'
-        
-        if res.status_code != 200:
-            return matches
+    return None
 
-        soup = BeautifulSoup(res.text, 'html.parser')
-        links = soup.find_all('a', href=True)
-        
-        for a in links:
-            href = a['href']
-            if any(path in href for path in ['/truc-tiep/', '/match/', '/xem-truc-tiep/', '/room/']):
-                full_url = href if href.startswith("http") else f"{domain.rstrip('/')}/{href.lstrip('/')}"
+def fetch_live_matches_via_api():
+    matches = []
+    
+    # 1. Thử gọi các API endpoint nội bộ
+    for api_url in API_ENDPOINTS:
+        try:
+            print(f"Đang kiểm tra API: {api_url}")
+            res = requests.get(api_url, headers=HEADERS, timeout=8)
+            if res.status_code == 200:
+                data = res.json()
+                items = data.get('data', []) if isinstance(data, dict) else data
                 
-                # Bỏ qua trùng lặp link BLV khác nhau của cùng 1 trận
-                base_match_url = re.sub(r'\?blv=.*$', '', full_url)
-                if base_match_url in seen_urls:
-                    continue
-                    
-                raw_text = a.get_text(separator=" ") or a.get('title', '')
-                title = format_match_title(raw_text)
-                
-                if title:
-                    seen_urls.add(base_match_url)
-                    print(f"-> Đang xử lý: {title}")
-                    
-                    # Tìm link .m3u8 phát trực tiếp
-                    m3u8_url = extract_direct_m3u8(full_url, domain)
-                    matches.append((title, m3u8_url))
-                    
-    except Exception as e:
-        print(f"Lỗi cào dữ liệu từ {domain}: {e}")
+                if isinstance(items, list) and len(items) > 0:
+                    for match in items:
+                        # Chỉ lấy trận đang LIVE
+                        status = str(match.get('status', '')).lower()
+                        is_live = match.get('is_live', False) or status in ['live', 'playing', '1']
+                        
+                        if is_live:
+                            league = clean_text(match.get('league_name') or match.get('tournament', 'Bóng Đá'))
+                            home = clean_text(match.get('home_name') or match.get('home_team', 'Đội A'))
+                            away = clean_text(match.get('away_name') or match.get('away_team', 'Đội B'))
+                            score_home = match.get('home_score', '0')
+                            score_away = match.get('away_score', '0')
+                            minute = match.get('minute') or match.get('match_time') or 'LIVE'
+                            
+                            title = f"{league} {home} {score_home} : {score_away} {away} | {minute}'"
+                            
+                            # Lấy link m3u8 trực tiếp từ JSON API
+                            stream_url = match.get('hls') or match.get('m3u8') or match.get('stream_url')
+                            if stream_url and '.m3u8' in stream_url:
+                                matches.append((title, stream_url))
+        except Exception as e:
+            print(f"API {api_url} không phản hồi: {e}")
 
     return matches
 
-def main():
-    live_matches = []
+def scrape_web_fallback():
+    """
+    Phương án dự phòng nếu API bị đổi: Quét HTML trang chủ và giải mã từng trang con
+    """
+    matches = []
+    domain = "https://xoiche1.live"
+    print(f"Đang quét giao diện web dự phòng: {domain}")
     
-    for domain in BACKUP_DOMAINS:
-        live_matches = get_live_matches(domain)
-        if live_matches:
-            break
+    try:
+        from bs4 import BeautifulSoup
+        res = requests.get(domain, headers=HEADERS, timeout=10)
+        if res.status_code == 200:
+            soup = BeautifulSoup(res.text, 'html.parser')
+            links = soup.find_all('a', href=True)
+            seen_urls = set()
+            
+            for a in links:
+                href = a['href']
+                if '/truc-tiep/' in href:
+                    full_url = href if href.startswith("http") else f"{domain.rstrip('/')}/{href.lstrip('/')}"
+                    base_url = re.sub(r'\?blv=.*$', '', full_url)
+                    
+                    if base_url in seen_urls:
+                        continue
+                    seen_urls.add(base_url)
+                    
+                    raw_text = clean_text(a.get_text(separator=" "))
+                    
+                    # Lọc phút
+                    min_match = re.search(r"(\d+['′])", raw_text)
+                    if min_match:
+                        minute = min_match.group(1)
+                        # Làm sạch tên trận
+                        clean_title = re.sub(r'\d{1,2}:\d{2}\s*\|\s*\d{1,2}-\d{1,2}(-\d{2,4})?', '', raw_text)
+                        clean_title = re.sub(r'^(Trực tiếp|Live|Xem)\s+', '', clean_title, flags=re.IGNORECASE)
+                        clean_title = re.sub(r'\s+blv.*$', '', clean_title, flags=re.IGNORECASE)
+                        
+                        title = f"{clean_title.strip()} | {minute}"
+                        
+                        # Giải mã ra link .m3u8 thật
+                        m3u8_url = extract_m3u8_from_page(full_url)
+                        if m3u8_url:
+                            matches.append((title, m3u8_url))
+    except Exception as e:
+        print(f"Lỗi fallback web: {e}")
+        
+    return matches
 
+def main():
+    # 1. Thử cào qua API trước
+    live_matches = fetch_live_matches_via_api()
+    
+    # 2. Nếu API không có dữ liệu, chuyển sang cào Web + Bóc m3u8 sâu
+    if not live_matches:
+        live_matches = scrape_web_fallback()
+
+    # 3. Xuất file M3U
     with open(M3U_FILE, "w", encoding="utf-8") as f:
         f.write("#EXTM3U\n")
         
@@ -170,7 +153,7 @@ def main():
             f.write('#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá\n')
             f.write("https://example.com/live.m3u8\n")
         else:
-            print(f"==> Thành công ghi nhận {len(live_matches)} trận đấu.")
+            print(f"==> Đã bóc tách thành công {len(live_matches)} link stream .m3u8!")
             for title, stream_url in live_matches:
                 f.write(f'#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", {title}\n')
                 f.write(f'{stream_url}\n')
