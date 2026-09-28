@@ -7,7 +7,6 @@ from urllib.parse import urlparse
 BASE_TV_URL = "https://xoiche.tv"
 M3U_FILE = "xoilac_live.m3u"
 
-# Danh sách domain dự phòng phòng khi xoiche.tv bị lỗi
 BACKUP_DOMAINS = [
     "https://xoiche1.live",
     "https://xoilac.live",
@@ -36,11 +35,9 @@ def get_latest_live_domain():
                 href = a['href'].strip()
                 text = (a.get_text() or "").lower()
                 
-                # BỎ QUA các link mạng xã hội bị bắt nhầm
                 if any(social in href for social in ['t.me', 'telegram', 'facebook', 'zalo', 'youtube']):
                     continue
                 
-                # Lấy link từ nút Xem Ngay / Xem Live
                 if any(k in text for k in ['xem ngay', 'xem live']) or ('http' in href and 'xoiche.tv' not in href):
                     if href.startswith('http'):
                         parsed = urlparse(href)
@@ -50,7 +47,6 @@ def get_latest_live_domain():
     except Exception as e:
         print(f"Lỗi khi tìm domain từ {BASE_TV_URL}: {e}")
         
-    print("Không bóc được domain từ xoiche.tv, chuyển sang thử danh sách dự phòng...")
     return None
 
 def clean_text(text):
@@ -101,11 +97,50 @@ def parse_match_title(raw_text):
             
         return clean_title, True
 
+def extract_direct_m3u8_url(match_page_url):
+    """
+    Đi sâu vào trang chi tiết trận đấu, bóc tách lấy link stream dạng .m3u8
+    Bỏ qua giao diện HTML và các banner quảng cáo.
+    """
+    try:
+        headers = HEADERS.copy()
+        headers["Referer"] = match_page_url
+        res = requests.get(match_page_url, headers=headers, timeout=10)
+        
+        if res.status_code == 200:
+            html = res.text
+            
+            # 1. Tìm trực tiếp file .m3u8 trong mã nguồn JavaScript / Player Config
+            m3u8_matches = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', html)
+            if m3u8_matches:
+                # Ưu tiên lấy link không chứa từ 'ad' hoặc 'promo' (để né quảng cáo)
+                clean_streams = [m for m in m3u8_matches if not any(x in m.lower() for x in ['ad', 'promo', 'banner'])]
+                if clean_streams:
+                    return clean_streams[0]
+                return m3u8_matches[0]
+
+            # 2. Nếu nằm trong iframe embed player
+            soup = BeautifulSoup(html, 'html.parser')
+            iframes = soup.find_all('iframe', src=True)
+            for iframe in iframes:
+                src = iframe['src']
+                if 'http' in src and any(k in src for k in ['embed', 'player', 'stream', 'live']):
+                    iframe_res = requests.get(src, headers=headers, timeout=8)
+                    if iframe_res.status_code == 200:
+                        inner_m3u8 = re.findall(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', iframe_res.text)
+                        if inner_m3u8:
+                            return inner_m3u8[0]
+    except Exception as e:
+        print(f"Lỗi bóc m3u8 từ {match_page_url}: {e}")
+        
+    # Nếu không trích xuất được file .m3u8 thô, giữ lại URL trang trận đấu
+    return match_page_url
+
 def get_live_matches(domain):
     matches = []
     seen_urls = set()
     
-    print(f"Đang bóc tách trận đấu từ: {domain}...")
+    print(f"Đang bóc tách danh sách trận đấu từ: {domain}...")
     try:
         headers = HEADERS.copy()
         headers["Referer"] = domain + "/"
@@ -132,7 +167,11 @@ def get_live_matches(domain):
                 
                 if is_live and title:
                     seen_urls.add(full_url)
-                    matches.append((title, full_url))
+                    print(f"-> Phát hiện trận LIVE: {title}")
+                    
+                    # Trích xuất đường dẫn .m3u8 phát trực tiếp
+                    m3u8_stream = extract_direct_m3u8_url(full_url)
+                    matches.append((title, m3u8_stream))
                     
     except Exception as e:
         print(f"Lỗi khi cào dữ liệu từ {domain}: {e}")
@@ -142,19 +181,16 @@ def get_live_matches(domain):
 def main():
     live_matches = []
     
-    # 1. Thử lấy domain từ xoiche.tv
     live_domain = get_latest_live_domain()
     if live_domain:
         live_matches = get_live_matches(live_domain)
 
-    # 2. Nếu xoiche.tv không tìm được trận, thử lần lượt các domain dự phòng
     if not live_matches:
         for backup in BACKUP_DOMAINS:
             live_matches = get_live_matches(backup)
             if live_matches:
                 break
 
-    # 3. Xuất file M3U
     with open(M3U_FILE, "w", encoding="utf-8") as f:
         f.write("#EXTM3U\n")
         
@@ -163,10 +199,10 @@ def main():
             f.write('#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá\n')
             f.write("https://example.com/live.m3u8\n")
         else:
-            print(f"==> Thành công! Đã ghi nhận {len(live_matches)} trận đấu đang LIVE.")
-            for title, url in live_matches:
+            print(f"==> Bóc tách thành công {len(live_matches)} link stream trực tiếp.")
+            for title, stream_url in live_matches:
                 f.write(f'#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", {title}\n')
-                f.write(f'{url}\n')
+                f.write(f'{stream_url}\n')
 
 if __name__ == "__main__":
     main()
