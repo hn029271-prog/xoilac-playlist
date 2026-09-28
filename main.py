@@ -2,22 +2,50 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 
-DOMAINS = [
-    "https://xoiche1.live",
-    "https://xoilac.live",
-    "https://xoilac.tv",
-    "https://xoilac.net"
-]
-
+BASE_TV_URL = "https://xoiche.tv"
 M3U_FILE = "xoilac_live.m3u"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-    "Referer": "https://xoiche1.live/",
+    "Referer": "https://xoiche.tv/",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
 }
+
+def get_latest_live_domain():
+    """
+    Truy cập xoiche.tv, quét nút/banner 'Xem Ngay' hoặc 'Xem Live'
+    để tự động trích xuất tên miền đang hoạt động mới nhất.
+    """
+    print(f"Đang truy cập {BASE_TV_URL} để lấy domain LIVE mới nhất...")
+    try:
+        res = requests.get(BASE_TV_URL, headers=HEADERS, timeout=12, allow_redirects=True)
+        res.encoding = 'utf-8'
+        
+        if res.status_code == 200:
+            soup = BeautifulSoup(res.text, 'html.parser')
+            # Tìm tất cả các thẻ <a> có chứa đường dẫn liên kết
+            links = soup.find_all('a', href=True)
+            
+            for a in links:
+                href = a['href'].strip()
+                text = (a.get_text() or "").lower()
+                
+                # Kiểm tra nếu link thuộc nút Xem Ngay / Xem Live hoặc chứa link ngoài xoiche.tv
+                if any(k in text for k in ['xem ngay', 'xem live', 'live']) or ('http' in href and 'xoiche.tv' not in href):
+                    if href.startswith('http'):
+                        parsed = urlparse(href)
+                        live_domain = f"{parsed.scheme}://{parsed.netloc}"
+                        print(f"==> Đã tìm thấy domain LIVE mới nhất: {live_domain}")
+                        return live_domain
+    except Exception as e:
+        print(f"Lỗi khi giải mã domain từ {BASE_TV_URL}: {e}")
+        
+    # Dự phòng nếu không bóc tách được từ banner xoiche.tv
+    print("Dùng tên miền dự phòng...")
+    return "https://xoiche1.live"
 
 def clean_text(text):
     if not text:
@@ -27,35 +55,28 @@ def clean_text(text):
 
 def parse_match_title(raw_text):
     """
-    Phân tích văn bản thô của trận đấu và chuẩn hóa về form:
-    'Đội A [Tỉ số] Đội B | Phút' (VD: Arsenal 1-0 Chelsea | 45')
-    Trả về (formatted_title, is_live)
+    Chuẩn hóa tên trận đấu thành form: Liverpool 2-1 Arsenal | 86'
     """
     text = clean_text(raw_text)
     
-    # Bỏ qua các mục không phải trận đấu
     if any(k in text.lower() for k in ['highlight', 'tin tức', 'lịch thi đấu', 'bảng xếp hạng']):
         return None, False
 
-    # 1. Tìm phút trận đấu (VD: 45', 86', Hiệp 1, Hiệp 2, H1, H2, HT, FT)
     minute_match = re.search(r"(\d+['′]|Hiệp \d|H\d|HT)", text, re.IGNORECASE)
     
-    # Kiểm tra xem trận đấu có dấu hiệu ĐANG LIVE hay không
     is_live = False
     minute_str = ""
     
     if minute_match:
         is_live = True
         minute_str = minute_match.group(1)
-    elif "live" in text.lower() or "đang đá" in text.lower() or "trực tiếp" in text.lower():
+    elif any(k in text.lower() for k in ["live", "đang đá", "trực tiếp"]):
         is_live = True
         minute_str = "LIVE"
 
-    # Nếu KHÔNG CÓ dấu hiệu đang đá / đang live (ví dụ chỉ có giờ đá 22:00, 02:00, chưa bắt đầu) -> Bỏ qua
     if not is_live:
         return None, False
 
-    # 2. Bóc tách Tên 2 Đội và Tỉ số (dạng X-Y hoặc X - Y)
     score_match = re.search(r"([A-Za-z0-9\sÀ-ỹ]+?)\s+(\d+\s*[-–]\s*\d+)\s+([A-Za-z0-9\sÀ-ỹ]+)", text)
     
     if score_match:
@@ -63,15 +84,12 @@ def parse_match_title(raw_text):
         score = clean_text(score_match.group(2)).replace(" ", "")
         team_b = clean_text(score_match.group(3))
         
-        # Lọc bỏ các từ thừa như 'Truc tiep', 'Live' dính vào tên đội
         team_a = re.sub(r'^(Trực tiếp|Live|Xem|TRỰC TIẾP)\s+', '', team_a, flags=re.IGNORECASE)
         team_b = re.sub(r'\s+(Trực tiếp|Live|Xem|TRỰC TIẾP)$', '', team_b, flags=re.IGNORECASE)
         
         formatted = f"{team_a} {score} {team_b} | {minute_str}"
         return formatted, True
     else:
-        # Nếu đang LIVE nhưng chưa bóc tách được tỉ số chuẩn (VD: vừa vào trận 0-0)
-        # Rút gọn tên trận sạch sẽ
         clean_title = re.sub(r'^(Trực tiếp|Live|Xem)\s+', '', text, flags=re.IGNORECASE)
         clean_title = re.sub(r'\s+(xem trực tiếp|link xem)$', '', clean_title, flags=re.IGNORECASE)
         
@@ -80,13 +98,16 @@ def parse_match_title(raw_text):
             
         return clean_title, True
 
-def get_live_matches_from_domain(domain):
+def get_live_matches(domain):
     matches = []
     seen_urls = set()
     
-    print(f"Đang quét dữ liệu từ: {domain}...")
+    print(f"Đang bóc tách danh sách trận đấu từ: {domain}...")
     try:
-        res = requests.get(domain, headers=HEADERS, timeout=12)
+        headers = HEADERS.copy()
+        headers["Referer"] = domain + "/"
+        
+        res = requests.get(domain, headers=headers, timeout=12)
         res.encoding = 'utf-8'
         
         if res.status_code != 200:
@@ -106,34 +127,32 @@ def get_live_matches_from_domain(domain):
                 raw_text = a.get_text(separator=" ") or a.get('title', '')
                 title, is_live = parse_match_title(raw_text)
                 
-                # CHỈ LẤY TRẬN ĐANG LIVE / ĐANG ĐÁ
                 if is_live and title:
                     seen_urls.add(full_url)
                     matches.append((title, full_url))
                     
     except Exception as e:
-        print(f"Lỗi khi xử lý {domain}: {e}")
+        print(f"Lỗi khi cào dữ liệu từ {domain}: {e}")
 
     return matches
 
 def main():
-    live_matches = []
+    # 1. Tự động lấy Domain LIVE mới nhất từ xoiche.tv
+    live_domain = get_latest_live_domain()
     
-    for domain in DOMAINS:
-        live_matches = get_live_matches_from_domain(domain)
-        if live_matches:
-            print(f"==> Quét thành công {len(live_matches)} trận ĐANG ĐÁ từ {domain}.")
-            break
+    # 2. Cào danh sách các trận đấu ĐANG LIVE từ domain vừa tìm được
+    live_matches = get_live_matches(live_domain)
 
-    # Ghi dữ liệu ra tệp M3U
+    # 3. Xuất file M3U
     with open(M3U_FILE, "w", encoding="utf-8") as f:
         f.write("#EXTM3U\n")
         
         if not live_matches:
-            print("Không có trận đấu nào đang phát sóng live lúc này.")
+            print("Hiện tại không có trận đấu nào đang LIVE.")
             f.write('#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá\n')
             f.write("https://example.com/live.m3u8\n")
         else:
+            print(f"==> Đã ghi nhận {len(live_matches)} trận đấu đang đá.")
             for title, url in live_matches:
                 f.write(f'#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", {title}\n')
                 f.write(f'{url}\n')
