@@ -17,16 +17,22 @@ def clean_title(raw_text):
     if not text or len(text) < 4:
         return None
 
-    # Loại bỏ ngày giờ trùng lặp (VD: 23:00 | 28-09-2026)
+    # 1. LOẠI BỎ TẤT CẢ CÁC TRẬN SẮP DIỄN RA HOẶC CHƯA ĐÁ
+    text_lower = text.lower()
+    skip_keywords = ["sắp diễn ra", "chưa diễn ra", "chưa bắt đầu", "sắp đá", "phút nữa", "lịch thi đấu"]
+    if any(keyword in text_lower for keyword in skip_keywords):
+        return None
+
+    # 2. Xóa ngày giờ trùng lặp (VD: 23:00 | 28-09-2026)
     text = re.sub(r'\d{1,2}:\d{2}\s*\|\s*\d{1,2}-\d{1,2}(-\d{2,4})?', '', text)
     text = re.sub(r'\d{1,2}:\d{2}', '', text)
     
-    # Loại bỏ từ khóa thừa
+    # 3. Loại bỏ các từ khóa thừa
     text = re.sub(r'^(Trực tiếp|Live|Xem|TRỰC TIẾP)\s+', '', text, flags=re.IGNORECASE)
     text = re.sub(r'\s+(blv|BLV).*$', '', text, flags=re.IGNORECASE)
     text = clean_text(text)
 
-    return text if text else "Trận đấu Trực tiếp"
+    return text if text else None
 
 async def capture_m3u8(context, match_url):
     page = await context.new_page()
@@ -35,7 +41,7 @@ async def capture_m3u8(context, match_url):
     def handle_request(request):
         nonlocal found_m3u8
         url = request.url
-        # Bắt request m3u8 thật, bỏ qua quảng cáo
+        # Chỉ lấy link m3u8 thật, bỏ qua quảng cáo
         if '.m3u8' in url and not any(x in url.lower() for x in ['ad', 'promo', 'banner', 'analytics']):
             if not found_m3u8:
                 found_m3u8 = url
@@ -46,7 +52,7 @@ async def capture_m3u8(context, match_url):
         print(f"Đang mở trang trận đấu: {match_url}")
         await page.goto(match_url, timeout=25000, wait_until="domcontentloaded")
         
-        # Click giả lập vào khung phát để kích hoạt stream
+        # Click giả lập để kích hoạt phát stream
         try:
             await page.click("video, iframe, .player-wrapper", timeout=3000)
         except:
@@ -86,7 +92,6 @@ async def main():
 
             for a in links:
                 href = a['href']
-                # Lấy tất cả các đường dẫn chứa trận đấu trực tiếp
                 if '/truc-tiep/' in href:
                     full_url = href if href.startswith("http") else f"{BASE_DOMAIN.rstrip('/')}/{href.lstrip('/')}"
                     base_url = re.sub(r'\?blv=.*$', '', full_url)
@@ -97,15 +102,16 @@ async def main():
                     raw_text = a.get_text(separator=" ")
                     title = clean_title(raw_text)
 
+                    # Chỉ lưu nếu title hợp lệ và không chứa từ khóa "Sắp diễn ra"
                     if title:
                         seen_urls.add(base_url)
                         raw_matches.append((title, base_url))
 
-            print(f"==> Quét được {len(raw_matches)} link trận đấu. Bắt đầu giải mã .m3u8...")
+            print(f"==> Quét được {len(raw_matches)} trận đang LIVE. Bắt đầu giải mã .m3u8...")
 
             for title, url in raw_matches:
                 m3u8_url = await capture_m3u8(context, url)
-                print(f" -> Trận: {title}")
+                print(f" -> Trận LIVE: {title}")
                 print(f"    Link stream: {m3u8_url}")
                 matches.append((title, m3u8_url))
 
