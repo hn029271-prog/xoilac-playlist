@@ -12,42 +12,30 @@ def clean_text(text):
         return ""
     return re.sub(r'\s+', ' ', str(text)).strip()
 
-def format_title(raw_text):
+def clean_title(raw_text):
     text = clean_text(raw_text)
-    
-    # Loại bỏ ngày giờ (VD: 23:00 | 28-09)
-    text = re.sub(r'\d{1,2}:\d{2}\s*\|\s*\d{1,2}-\d{1,2}(-\d{2,4})?', '', text)
-    text = re.sub(r'\d{1,2}:\d{2}', '', text)
-    text = clean_text(text)
-
-    # Tìm phút thi đấu
-    minute_match = re.search(r"(\d+['′]|Hiệp \d|H\d|HT)", text, re.IGNORECASE)
-    minute_str = ""
-    if minute_match:
-        minute_str = minute_match.group(1)
-        text = text.replace(minute_str, '').strip()
-
-    if not minute_str:
+    if not text or len(text) < 4:
         return None
 
-    # Dọn dẹp từ thừa
+    # Loại bỏ ngày giờ trùng lặp (VD: 23:00 | 28-09-2026)
+    text = re.sub(r'\d{1,2}:\d{2}\s*\|\s*\d{1,2}-\d{1,2}(-\d{2,4})?', '', text)
+    text = re.sub(r'\d{1,2}:\d{2}', '', text)
+    
+    # Loại bỏ từ khóa thừa
     text = re.sub(r'^(Trực tiếp|Live|Xem|TRỰC TIẾP)\s+', '', text, flags=re.IGNORECASE)
     text = re.sub(r'\s+(blv|BLV).*$', '', text, flags=re.IGNORECASE)
+    text = clean_text(text)
 
-    return f"{text} | {minute_str}"
+    return text if text else "Trận đấu Trực tiếp"
 
 async def capture_m3u8(context, match_url):
-    """
-    Mở từng trận trong một Tab (Page) hoàn toàn mới 
-    để không bị lẫn request giữa các trận với nhau.
-    """
     page = await context.new_page()
     found_m3u8 = None
 
     def handle_request(request):
         nonlocal found_m3u8
         url = request.url
-        # Chỉ bắt link stream m3u8 thật, bỏ qua quảng cáo
+        # Bắt request m3u8 thật, bỏ qua quảng cáo
         if '.m3u8' in url and not any(x in url.lower() for x in ['ad', 'promo', 'banner', 'analytics']):
             if not found_m3u8:
                 found_m3u8 = url
@@ -55,17 +43,17 @@ async def capture_m3u8(context, match_url):
     page.on("request", handle_request)
 
     try:
-        print(f"Đang mở trình duyệt ảo: {match_url}")
+        print(f"Đang mở trang trận đấu: {match_url}")
         await page.goto(match_url, timeout=25000, wait_until="domcontentloaded")
         
-        # Click giả lập vào màn hình video để kích hoạt luồng phát
+        # Click giả lập vào khung phát để kích hoạt stream
         try:
             await page.click("video, iframe, .player-wrapper", timeout=3000)
         except:
             pass
 
-        # Tăng thời gian chờ lên 12 giây (24 lần x 0.5s) để đợi quảng cáo chạy xong
-        for _ in range(24):
+        # Chờ tối đa 10 giây để nhận request .m3u8
+        for _ in range(20):
             if found_m3u8:
                 break
             await asyncio.sleep(0.5)
@@ -73,7 +61,7 @@ async def capture_m3u8(context, match_url):
     except Exception as e:
         print(f"Lỗi khi bắt stream từ {match_url}: {e}")
 
-    await page.close() # Đóng tab sau khi hoàn thành
+    await page.close()
     return found_m3u8 or match_url
 
 async def main():
@@ -86,18 +74,19 @@ async def main():
         )
         page = await context.new_page()
 
-        print(f"Đang quét danh sách trận đấu từ {BASE_DOMAIN}...")
+        print(f"Đang truy cập trang chủ: {BASE_DOMAIN}...")
         try:
-            await page.goto(BASE_DOMAIN, timeout=20000, wait_until="networkidle")
+            await page.goto(BASE_DOMAIN, timeout=25000, wait_until="networkidle")
             content = await page.content()
             soup = BeautifulSoup(content, 'html.parser')
             
             links = soup.find_all('a', href=True)
             seen_urls = set()
-
             raw_matches = []
+
             for a in links:
                 href = a['href']
+                # Lấy tất cả các đường dẫn chứa trận đấu trực tiếp
                 if '/truc-tiep/' in href:
                     full_url = href if href.startswith("http") else f"{BASE_DOMAIN.rstrip('/')}/{href.lstrip('/')}"
                     base_url = re.sub(r'\?blv=.*$', '', full_url)
@@ -106,27 +95,26 @@ async def main():
                         continue
                     
                     raw_text = a.get_text(separator=" ")
-                    title = format_title(raw_text)
+                    title = clean_title(raw_text)
 
                     if title:
                         seen_urls.add(base_url)
                         raw_matches.append((title, base_url))
 
-            print(f"==> Tìm thấy {len(raw_matches)} trận đang LIVE. Bắt đầu giải mã .m3u8...")
+            print(f"==> Quét được {len(raw_matches)} link trận đấu. Bắt đầu giải mã .m3u8...")
 
-            # ĐÂY LÀ ĐOẠN ĐÃ SỬA: Truyền `context` vào thay vì `page`
             for title, url in raw_matches:
                 m3u8_url = await capture_m3u8(context, url)
                 print(f" -> Trận: {title}")
-                print(f"    Stream: {m3u8_url}")
+                print(f"    Link stream: {m3u8_url}")
                 matches.append((title, m3u8_url))
 
         except Exception as e:
-            print(f"Lỗi truy cập trang chủ: {e}")
+            print(f"Lỗi khi quét trang chủ: {e}")
         
         await browser.close()
 
-    # Ghi ra file M3U
+    # Xuất file M3U
     with open(M3U_FILE, "w", encoding="utf-8") as f:
         f.write("#EXTM3U\n")
         if not matches:
