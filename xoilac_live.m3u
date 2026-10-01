@@ -1,9 +1,9 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 39' UEFA Nations League Đan Mạch 1 : 2 Bồ Đào Nha Tam Mao
-https://live.khoga.space/live/livehub8/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 41' UEFA Nations League Đức 1 : 0 Serbia Xôi Xoài
-https://live.khoga.space/live/livehub3/index.m3u8
 #EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp UEFA Nations League Hy Lạp 0 : 0 Hà Lan Táo Dai
 https://live.khoga.space/live/livehub1/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 43' UEFA Nations League Xứ Wales 1 : 1 Na Uy Gà Rừng
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp UEFA Nations League Xứ Wales 1 : 1 Na Uy Gà Rừng
 https://live.khoga.space/live/livehub4/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp UEFA Nations League Đan Mạch 1 : 2 Bồ Đào Nha Tam Mao
+https://live.khoga.space/live/livehub8/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp UEFA Nations League Đức 1 : 0 Serbia Xôi Xoài
+https://live.khoga.space/live/livehub3/index.m3u8
