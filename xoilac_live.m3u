@@ -1,5 +1,11 @@
 #EXTM3U
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 1' Club Friendlies Sevilla 0 : 0 Aston Villa Xôi Xoài
+https://live.khoga.space/live/livehub3/index.m3u8
 #EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp UEFA Nations League Ba Lan 0 : 0 Romania Táo Dai
 https://live.khoga.space/live/livehub1/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp UEFA Nations League Bỉ 0 : 0 Thổ Nhĩ Kỳ Khô Cay
+https://live.khoga.space/live/livehub9/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp UEFA Nations League Pháp 0 : 0 Ý Tam Mao
+https://live.khoga.space/live/livehub8/index.m3u8
 #EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Đã kết thúc Friendlies Panama VS New Zealand Khô Cay
 https://live.khoga.space/live/livehub9/index.m3u8
