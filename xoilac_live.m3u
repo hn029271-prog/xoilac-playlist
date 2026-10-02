@@ -1,5 +1,7 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp UEFA Nations League Síp 0 : 0 Armenia Táo Dai
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 17' UEFA Nations League Síp 0 : 0 Armenia Táo Dai
 https://live.khoga.space/live/livehub1/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 17' UEFA Nations League Latvia 0 : 1 Montenegro Xôi Xoài
+https://live.khoga.space/live/livehub3/index.m3u8
 #EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Đã kết thúc Friendlies Panama VS New Zealand Khô Cay
 https://live.khoga.space/live/livehub9/index.m3u8
