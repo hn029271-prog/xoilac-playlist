@@ -1,5 +1,9 @@
 #EXTM3U
 #EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Đã kết thúc Asian Games China U23 3 : 2 Uzbekistan U23 Khô Cay
 https://live.khoga.space/live/livehub9/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Fifa Asean Cup - Division 2 - Play Offs Hong Kong 0 : 0 Cambodia Tam Mao
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 5' J-League Cup Kashiwa Reysol 0 : 0 Gamba Osaka Xôi Xoài
+https://live.khoga.space/live/livehub3/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 7' Fifa Asean Cup - Division 2 - Play Offs Hong Kong 0 : 0 Cambodia Tam Mao
 https://live.khoga.space/live/livehub8/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Asian Games U23 Hàn Quốc 0 : 0 U23 Nhật Bản Gà Rừng
+https://live.khoga.space/live/livehub4/index.m3u8
