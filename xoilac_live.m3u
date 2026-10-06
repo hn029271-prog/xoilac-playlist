@@ -1,9 +1,3 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 65' UEFA Nations League Scotland 1 : 1 Slovenia Khô Cay
-https://live.khoga.space/live/livehub9/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 67' UEFA Nations League Thụy Sĩ 1 : 0 Bắc Macedonia Xôi Xoài
-https://live.khoga.space/live/livehub3/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 67' UEFA Nations League Croatia 1 : 1 Tây Ban Nha Khô Chè
-https://live.khoga.space/live/livehub5/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 67' UEFA Nations League Anh 3 : 0 Cộng Hòa Séc Tam Mao
-https://live.khoga.space/live/livehub8/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
+https://example.com/live.m3u8
