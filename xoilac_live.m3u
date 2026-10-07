@@ -1,3 +1,5 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Đã kết thúc Friendlies Argentina 3 : 0 Benin Gà Rừng
+https://live.khoga.space/live/livehub4/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 64' Friendlies Mỹ 1 : 0 Canada Khô Cay
+https://live.khoga.space/live/livehub9/index.m3u8
