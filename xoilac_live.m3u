@@ -1,3 +1,9 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Đã kết thúc Veikkausliiga HJK 6 : 0 VPS
+https://xoiche1.live/truc-tiep/hjk-vs-vps-08-10-2026-854938
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 82' League Cup Khorfakkan 1 : 1 Al Wasl
+https://live.khoga.space/live/livehub1/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 72' Veikkausliiga KuPS 0 : 1 AC Oulu
+https://live.khoga.space/live/livehub8/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 29' Stars League Al Wakra 0 : 0 Al-Gharafa
+https://live.khoga.space/live/livehub10/index.m3u8
