@@ -1,3 +1,5 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 12' ASEAN Club Championship Lion City 0 : 0 Cong An Ha Noi Xôi Xoài
+https://xoiche1.live/truc-tiep/lion-city-vs-cong-an-ha-noi-08-10-2026-786027
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp ASEAN Club Championship Johor DT 0 : 0 Svay Rieng Tam Mao
+https://live.khoga.space/live/livehub8/index.m3u8
