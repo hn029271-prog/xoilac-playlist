@@ -1,3 +1,5 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 75' Chinese Super League Zhejiang Professional 2 : 4 Shanghai Port
+https://live.khoga.space/live/livehub4/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 75' Youth Championship CSKA Moscow U19 1 : 0 Konoplev Academy U19
+https://live.khoga.space/live/livehub12/index.m3u8
