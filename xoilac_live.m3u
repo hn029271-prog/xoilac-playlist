@@ -1,11 +1,9 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 78' Saudi League Al Kholood 0 : 4 Al Qadsiah
-https://live.khoga.space/live/livehub3/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 36' Saudi League Al Fateh 0 : 1 Al Ahli SC
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Saudi League Al Fateh 0 : 1 Al Ahli SC
 https://live.khoga.space/live/livehub9/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 31' Veikkausliiga SJK 1 : 0 Lahti
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Veikkausliiga SJK 1 : 0 Lahti
 https://live.khoga.space/live/livehub4/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 28' Liga I Corvinul 2 : 1 FC Voluntari
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Liga I Corvinul 2 : 1 FC Voluntari
 https://live.khoga.space/live/livehub12/index.m3u8
 #EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Tauron Liga Ba Lan Nữ IT ITA TOOLS STAL Mielec 0 : 0 MP Metalkas Pałac Bydgoszcz
 https://live.khoga.space/live/livehub6/index.m3u8
