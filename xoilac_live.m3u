@@ -1,7 +1,3 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Giao Hữu Nippon Steel Sakai Blazers 0 : 0 Wolfdogs Nagoya
-https://xoiche1.live/truc-tiep/nippon-steel-sakai-blazers-vs-wolfdogs-nagoya-10-10-2026-1530
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 58' Australia Cup South Melbourne 0 : 0 Melbourne Victory
-https://live.khoga.space/live/livehub8/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp SV.League Nhật Bản / W SAGA Hisamitsu Springs 0 : 0 Queenseis Kariya
-https://live.khoga.space/live/livehub10/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
+https://example.com/live.m3u8
