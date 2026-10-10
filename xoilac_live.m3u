@@ -1,11 +1,3 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Jesi Volley Cup 2026 (nam) Allianz Milano 0 : 0 Olympiakos Piraeus
-https://live.khoga.space/live/livehub6/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 25' Serie A Inter 2 : 0 Parma
-https://live.khoga.space/live/livehub3/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp La Liga Barcelona 0 : 0 Getafe
-https://xoiche1.live/truc-tiep/barcelona-vs-getafe-10-10-2026-798877
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Premier League Manchester Utd 0 : 0 Tottenham
-https://live.khoga.space/live/livehub10/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Bundesliga RB Leipzig 0 : 0 Eintracht Frankfurt
-https://live.khoga.space/live/livehub5/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
+https://example.com/live.m3u8
