@@ -1,11 +1,15 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 73' La Liga Barcelona 2 : 0 Getafe
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 90+ La Liga Barcelona 3 : 0 Getafe
 https://live.khoga.space/live/livehub8/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 82' Premier League Manchester Utd 1 : 0 Tottenham
-https://xoiche1.live/truc-tiep/manchester-utd-vs-tottenham-10-10-2026-812708
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 80' Bundesliga RB Leipzig 5 : 0 Eintracht Frankfurt
-https://live.khoga.space/live/livehub5/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 48' Primeira Liga Maritimo 1 : 1 FC Porto
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 70' Primeira Liga Maritimo 1 : 1 FC Porto
 https://live.khoga.space/live/livehub11/index.m3u8
 #EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Serie A1 Ý / W Megabox Vallefoglia 0 : 0 Savino Del Bene Scandicci
 https://live.khoga.space/live/livehub12/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Serie A1 Ý / W Imoco Conegliano 0 : 0 Laica UYBA Busto Arsizio
+https://live.khoga.space/live/livehub2/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Giao Hữu Cucine Lube Civitanova 0 : 0 Suntory Sunbirds Osaka
+https://live.khoga.space/live/livehub6/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Serie A Napoli 0 : 0 Frosinone
+https://live.khoga.space/live/livehub10/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Ligue 1 PSG 0 : 0 Le Mans
+https://live.khoga.space/live/livehub5/index.m3u8
