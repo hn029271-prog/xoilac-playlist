@@ -1,13 +1,3 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 66' Bundesliga Augsburg 2 : 1 Bayern Munich
-https://live.khoga.space/live/livehub8/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Premier League Chelsea 2 : 0 Bournemouth
-https://live.khoga.space/live/livehub5/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Premier League Sunderland 0 : 0 Brighton
-https://live.khoga.space/live/livehub4/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 41' La Liga Alaves 0 : 1 Atl. Madrid
-https://live.khoga.space/live/livehub9/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Premier League Aston Villa 1 : 1 Brentford
-https://live.khoga.space/live/livehub3/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Premier League Ipswich 0 : 0 Fulham
-https://live.khoga.space/live/livehub11/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
+https://example.com/live.m3u8
