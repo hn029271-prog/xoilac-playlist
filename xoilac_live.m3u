@@ -1,3 +1,11 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Sultanlar Ligi Nữ Galatasaray Daikin 0 : 0 Nilüfer Belediyespor Eker
+https://xoiche1.live/truc-tiep/galatasaray-daikin-vs-nilufer-belediyespor-eker-11-10-2026-1700
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 50' Serie A Como 0 : 0 AS Roma
+https://live.khoga.space/live/livehub13/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 44' V.League 1 Song Lam Nghe An 0 : 1 Ho Chi Minh
+https://live.khoga.space/live/livehub8/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp La Liga Elche 0 : 0 Celta Vigo
+https://live.khoga.space/live/livehub5/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Sultanlar Ligi Nữ Sinnada Hotels Afyon Bld. Yüntaş 0 : 0 Türk Hava Yolları
+https://live.khoga.space/live/livehub12/index.m3u8
