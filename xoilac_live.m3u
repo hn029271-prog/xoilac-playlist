@@ -1,3 +1,7 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp AXA Sigorta Şampiyonlar Kupası / M Ziraat Bankkart 0 : 0 Galatasaray
+https://xoiche1.live/truc-tiep/ziraat-bankkart-vs-galatasaray-12-10-2026-2100
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 22' AFC Champions League Elite Al-Gharafa 0 : 0 Esteghlal F.C.
+https://xoiche1.live/truc-tiep/al-gharafa-vs-esteghlal-f-c-13-10-2026-848523
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp AFC Champions League Elite Al Nassr 0 : 0 Neftchi Fargona
+https://xoiche1.live/truc-tiep/al-nassr-vs-neftchi-fargona-13-10-2026-848524
