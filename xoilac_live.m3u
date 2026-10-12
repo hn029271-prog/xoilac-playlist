@@ -1,15 +1,13 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Tauron Liga Ba Lan Nữ KS DevelopRes Rzeszów 0 : 0 Sokół & Hagric Mogilno
-https://live.khoga.space/live/livehub6/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 63' AFC Champions League Al Wasl 1 : 2 Al Ahli SC
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 78' AFC Champions League Al Wasl 1 : 2 Al Ahli SC
 https://live.khoga.space/live/livehub10/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 70' AFC Champions League Tractor 0 : 0 Shamal
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 85' AFC Champions League Tractor 0 : 0 Shamal
 https://live.khoga.space/live/livehub13/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 71' Veikkausliiga AC Oulu 1 : 3 HJK
-https://live.khoga.space/live/livehub5/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Segunda División Oviedo 2 : 0 Eibar
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 52' Segunda División Oviedo 2 : 0 Eibar
 https://live.khoga.space/live/livehub8/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 56' Serie A Atalanta 3 : 1 Venezia
+https://live.khoga.space/live/livehub11/index.m3u8
 #EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp AXA Sigorta Şampiyonlar Kupası / M Ziraat Bankkart 0 : 0 Galatasaray
 https://live.khoga.space/live/livehub2/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Serie A Atalanta 3 : 1 Venezia
-https://live.khoga.space/live/livehub11/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp AFC Champions League Elite Al-Gharafa 0 : 0 Esteghlal F.C.
+https://live.khoga.space/live/livehub5/index.m3u8
