@@ -1,9 +1,3 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 90+ A-League Men Auckland FC 3 : 1 Melbourne City
-https://xoiche1.live/truc-tiep/auckland-fc-vs-melbourne-city-17-10-2026-820289
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp SV.League Nhật Bản Nam Tokyo Great Bears 0 : 0 Hokkaido Yellow Stars
-https://live.khoga.space/live/livehub6/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp SV.League Nhật Bản / W Astemo Rivale Ibaraki 0 : 0 Gunma Green Wings
-https://live.khoga.space/live/livehub10/index.m3u8
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp A-League Men Macarthur FC 0 : 0 Perth Glory
-https://live.khoga.space/live/livehub13/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
+https://example.com/live.m3u8
