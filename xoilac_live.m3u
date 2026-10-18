@@ -1,3 +1,7 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 90+ J1 League Okayama 0 : 3 Vissel Kobe
+https://xoiche1.live/truc-tiep/okayama-vs-vissel-kobe-18-10-2026-807571
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp SV.League Nhật Bản / W NEC Red Rockets Kawasaki 0 : 0 Victorina Himeji
+https://live.khoga.space/live/livehub6/index.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp J1 League Machida 1 : 0 Avispa Fukuoka
+https://live.khoga.space/live/livehub8/index.m3u8
