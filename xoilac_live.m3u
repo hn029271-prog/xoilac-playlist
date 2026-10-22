@@ -1,3 +1,11 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp UEFA Conference League Jablonec 0 : 0 Brighton
+https://xoiche1.live/truc-tiep/jablonec-vs-brighton-22-10-2026-853489
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp UEFA Europa League Juventus 0 : 0 Rennes
+https://xoiche1.live/truc-tiep/juventus-vs-rennes-22-10-2026-853657
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp UEFA Europa League OFI Crete 0 : 0 Bayer Leverkusen
+https://xoiche1.live/truc-tiep/ofi-crete-vs-bayer-leverkusen-22-10-2026-853684
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp UEFA Europa League Sturm Graz 0 : 0 Marseille
+https://xoiche1.live/truc-tiep/sturm-graz-vs-marseille-22-10-2026-853721
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Tạm hoãn Saudi League Al Ahli SC VS Al Khaleej
+https://xoiche1.live/truc-tiep/al-ahli-sc-vs-al-khaleej-23-10-2026-386997
