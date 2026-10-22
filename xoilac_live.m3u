@@ -1,3 +1,15 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 7' UEFA Europa League Besiktas 0 : 1 Crystal Palace
+https://xoiche1.live/truc-tiep/besiktas-vs-crystal-palace-23-10-2026-293687
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 9' UEFA Europa League Bournemouth 1 : 0 AC Milan
+https://xoiche1.live/truc-tiep/bournemouth-vs-ac-milan-23-10-2026-237446
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 8' UEFA Europa League Celtic 0 : 0 Celta Vigo
+https://xoiche1.live/truc-tiep/celtic-vs-celta-vigo-23-10-2026-779995
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 8' UEFA Europa League Hoffenheim 0 : 0 Lyon
+https://xoiche1.live/truc-tiep/hoffenheim-vs-lyon-23-10-2026-892689
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 9' UEFA Europa League Lillestrom 0 : 0 Real Sociedad
+https://xoiche1.live/truc-tiep/lillestrom-vs-real-sociedad-23-10-2026-119221
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 9' UEFA Champions League Ajax 0 : 0 Atalanta
+https://xoiche1.live/truc-tiep/ajax-vs-atalanta-23-10-2026-871774
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 8' UEFA Champions League Monaco 0 : 0 Freiburg
+https://xoiche1.live/truc-tiep/monaco-vs-freiburg-23-10-2026-876227
