@@ -1,3 +1,7 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp La Liga Real Sociedad 0 : 0 Levante
+https://xoiche1.live/truc-tiep/real-sociedad-vs-levante-26-10-2026-798903
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Nghỉ giữa hiệp Primeira Liga Nacional 1 : 0 Braga
+https://xoiche1.live/truc-tiep/nacional-vs-braga-26-10-2026-803716
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp La Liga Barcelona 0 : 0 Real Madrid
+https://xoiche1.live/truc-tiep/barcelona-vs-real-madrid-26-10-2026-798899
