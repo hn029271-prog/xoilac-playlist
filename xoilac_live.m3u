@@ -1,3 +1,13 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Efeler Ligi Thổ Nhĩ Kỳ Nam Ziraat Bankkart 0 : 0 Gaziantep Gençlik Spor
+https://xoiche1.live/truc-tiep/ziraat-bankkart-vs-gaziantep-genclik-spor-27-10-2026-2300
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Efeler Ligi Thổ Nhĩ Kỳ Nam Fenerbahçe Medicana 0 : 0 On Hotels Alanya Belediyespor
+https://xoiche1.live/truc-tiep/fenerbahce-medicana-vs-on-hotels-alanya-belediyespor-27-10-2026-2300
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 75' AFC Champions League Elite Shabab Al-Ahli Dubai 1 : 0 Esteghlal F.C.
+https://xoiche1.live/truc-tiep/shabab-al-ahli-dubai-vs-esteghlal-f-c-27-10-2026-848548
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 71' Cup Shakhtar Donetsk 1 : 0 Dyn. Kyiv
+https://xoiche1.live/truc-tiep/shakhtar-donetsk-vs-dyn-kyiv-27-10-2026-857588
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 34' DFB Pokal Hamburger SV 0 : 0 Eintracht Frankfurt
+https://xoiche1.live/truc-tiep/hamburger-sv-vs-eintracht-frankfurt-28-10-2026-855374
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 4' Serie A Sassuolo 0 : 1 Lazio
+https://xoiche1.live/truc-tiep/sassuolo-vs-lazio-28-10-2026-807940
