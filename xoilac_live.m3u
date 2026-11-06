@@ -1,3 +1,9 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", [LIVE] Hiện không có trận đấu nào đang đá
-https://example.com/live.m3u8
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 21' Bundesliga Hamburger SV 1 : 0 B. Monchengladbach
+https://xoiche1.live/truc-tiep/hamburger-sv-vs-b-monchengladbach-06-11-2026-809338
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 3' Serie A Venezia 0 : 0 Udinese
+https://xoiche1.live/truc-tiep/venezia-vs-udinese-06-11-2026-807962
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", 5' Ligue 1 Toulouse 0 : 0 Strasbourg
+https://xoiche1.live/truc-tiep/toulouse-vs-strasbourg-06-11-2026-809995
+#EXTINF:-1 tvg-logo="" group-title="Bóng Đá", Trực tiếp Premier League Everton 0 : 0 Coventry
+https://xoiche1.live/truc-tiep/everton-vs-coventry-06-11-2026-812743
